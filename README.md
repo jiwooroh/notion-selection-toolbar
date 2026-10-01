@@ -106,13 +106,9 @@ You can bind or change hotkeys under **Settings → Hotkeys**.
 
 ## Installation (manual)
 
-1. Build the plugin:
-   ```bash
-   npm install
-   npm run build
-   ```
-2. Copy `main.js`, `manifest.json`, and `styles.css` into `<your vault>/.obsidian/plugins/notion-selection-toolbar/`.
-3. Enable **Notion Selection Toolbar** in Obsidian under **Settings → Community plugins**.
+1. Download `main.js`, `manifest.json`, and `styles.css` from the [latest release](https://github.com/jiwooroh/notion-selection-toolbar/releases/latest).
+2. Put them in `<your vault>/.obsidian/plugins/notion-selection-toolbar/` (create the folder if it doesn't exist).
+3. Restart Obsidian, then enable **Notion Selection Toolbar** under **Settings → Community plugins**.
 
 ## Development
 
