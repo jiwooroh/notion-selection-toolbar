@@ -1,20 +1,110 @@
 # Notion Selection Toolbar
 
-A Notion-style floating toolbar for [Obsidian](https://obsidian.md) that appears when you select text or a line.
+A Notion-style floating toolbar for [Obsidian](https://obsidian.md). Select some text and a toolbar pops up above it. From there you can change the block type, color the text or highlight it, and apply inline formatting without typing any Markdown.
 
-## Features
+![Demo](images/demo.gif)
 
-- Change block type (headings, lists, quotes, etc.)
-- Text color and highlight (background) color, with customizable light/dark palettes
-- Inline formatting: bold, italic, strikethrough, underline, and more
-- Recently used colors, plus a command to re-apply the most recent one
-- Optional custom toolbar button that runs any Obsidian command
+## How to use
 
-## Commands
+1. Open a note in **editing mode** (Live Preview or Source mode). The toolbar doesn't appear in Reading view.
+2. **Select text** with the mouse or keyboard. The toolbar appears just above the selection, or below it if there's no room above.
+3. Click a button to apply it. The selection stays in place, so you can stack several actions, for example a color, then bold, then italic.
+4. Press **Esc** or click elsewhere to close the toolbar or any open menu.
 
-- Toggle strikethrough
-- Toggle underline
-- Apply most recently used color
+### Toolbar layout
+
+```
+┌──────────────────────────────┐
+│ ¶ Text ›                     │  Turn into (block type)
+│ A   B   I   U   ⌫            │  Color · Bold · Italic · Underline · Clear formatting
+│ 🔗  S̶   <>  Σ   ⋯            │  Link · Strikethrough · Inline code · Inline equation · More
+│ 💬 Comment   ✨              │  Comment · Custom button
+└──────────────────────────────┘
+```
+
+<!-- ![Toolbar](images/toolbar.png) -->
+
+### Turn into (block type)
+
+The top button shows the current line's block type (e.g. `Heading 2`). Click it to convert the selected line or lines:
+
+<!-- ![Turn into menu](images/turn-into.png) -->
+
+| Menu item | Result |
+| --- | --- |
+| Text | Removes the heading, list, quote or callout marker |
+| Heading 1–4 | `#` … `####` |
+| Bulleted / Numbered / To-do list | `- `, `1. `, `- [ ] ` (renumbered automatically when you select several lines) |
+| Quote | `> ` |
+| Callout | Opens a submenu of Obsidian callout types (Note, Info, Tip, Warning, Danger, Bug, …) → `> [!type]` |
+| Code | Wraps the lines in a ```` ``` ```` code block |
+| Block equation | Wraps the lines in a `$$` math block |
+| Toggle list / Toggle heading 1–4 | A collapsible `<details>` block. The selected text becomes the summary, and you type the hidden content on the next line |
+| 2 columns | A two-column layout. The selected content goes in the left column |
+| **Page** | Moves the selection into a new note in the same folder and leaves a `[[wikilink]]` in its place. The first line of the selection becomes the note's title |
+| **Page in** | Same as Page, but first asks which folder to create the note in |
+
+<!-- ![Callout submenu](images/callout.png) -->
+
+### Colors
+
+Click **A** to open the color panel:
+
+<!-- ![Color panel](images/colors.png) -->
+
+- **Text color**: 9 Notion colors (gray, brown, orange, yellow, green, blue, purple, pink, red)
+- **Background color**: the same 9 colors as highlights
+- **Default**: removes the color from the selection
+- **Recently used**: your last 5 colors
+
+<!-- ![Colored and highlighted text in a note](images/colors-result.png) -->
+
+Press **Cmd/Ctrl + Shift + H** to apply your most recently used color to the selection without opening the toolbar.
+
+Colors follow your theme: applied colors switch automatically between light and dark mode.
+
+> **Note:** Colors are saved as HTML (`<span class="nst-fg-red">`, `<mark class="nst-hl-yellow">`) and get their look from this plugin's CSS. If you disable the plugin, the text stays but the colors stop showing.
+
+### Inline formatting
+
+| Button | Markdown |
+| --- | --- |
+| Bold / Italic | `**text**` / `*text*` |
+| Underline | `<u>text</u>` |
+| Strikethrough | `~~text~~` |
+| Inline code | `` `text` `` |
+| Inline equation | `$text$` |
+| Link | Type or paste a URL and press **Enter** → `[text](url)` |
+| Clear formatting | Removes bold, italic, underline, strikethrough, highlights, colors, code and block markers from the selection |
+
+Every button toggles: click it again on the same selection to remove the formatting. Formatting a colored selection works too, because the markers are placed inside the color tag so Live Preview renders them correctly.
+
+### Other buttons
+
+- **More (⋯)**: opens Obsidian's command palette.
+- **Comment**: adds a comment to the selection. Requires the **Document Comments** plugin to be installed and enabled.
+- **Custom button (✨)**: runs any command you assign to it in settings (see below).
+
+## Settings
+
+Go to **Settings → Notion Selection Toolbar**:
+
+<!-- ![Settings](images/settings.png) -->
+
+- **Light / Dark theme highlight colors**: change each background color separately for light and dark mode. Use the ↺ button to reset a color to its default. Highlights already in your notes update immediately.
+- **Custom toolbar button**
+  - **Command**: pick any command from the command palette for the button to run.
+  - **Icon**: any [Lucide](https://lucide.dev/icons) icon name, e.g. `sparkles`, `star`, `zap`, `bookmark`.
+
+## Commands & hotkeys
+
+| Command | Default hotkey |
+| --- | --- |
+| Apply most recently used color | `Cmd/Ctrl + Shift + H` |
+| Toggle strikethrough | – |
+| Toggle underline | – |
+
+You can bind or change hotkeys under **Settings → Hotkeys**.
 
 ## Installation (manual)
 
@@ -24,7 +114,7 @@ A Notion-style floating toolbar for [Obsidian](https://obsidian.md) that appears
    npm run build
    ```
 2. Copy `main.js`, `manifest.json`, and `styles.css` into `<your vault>/.obsidian/plugins/notion-selection-toolbar/`.
-3. Enable **Notion Selection Toolbar** in Obsidian under Settings → Community plugins.
+3. Enable **Notion Selection Toolbar** in Obsidian under **Settings → Community plugins**.
 
 ## Development
 
