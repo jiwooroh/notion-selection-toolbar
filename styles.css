@@ -1,0 +1,381 @@
+/* Floating selection toolbar */
+.nst-toolbar {
+	--nst-cell: 28px;
+	--nst-gap: 2px;
+	--nst-pad: 4px;
+	--nst-border: 1px;
+	box-sizing: border-box;
+	position: fixed;
+	z-index: var(--layer-popover, 70);
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	width: calc(
+		var(--nst-cell) * 5 + var(--nst-gap) * 4 + var(--nst-pad) * 2 + var(--nst-border) * 2 + 2px
+	);
+	gap: var(--nst-gap);
+	padding: var(--nst-pad);
+	background: var(--background-primary);
+	border: var(--nst-border) solid var(--background-modifier-border);
+	border-radius: var(--radius-m, 8px);
+	box-shadow: var(--shadow-l, 0 4px 16px rgba(0, 0, 0, 0.2));
+	font-size: var(--font-ui-small);
+	user-select: none;
+}
+
+.nst-toolbar button {
+	all: unset;
+	box-sizing: border-box;
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	height: var(--nst-cell);
+	padding: 0 6px;
+	border-radius: var(--radius-s, 4px);
+	color: var(--text-normal);
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.nst-toolbar button:hover {
+	background: var(--background-modifier-hover);
+}
+
+.nst-toolbar button.nst-btn,
+.nst-toolbar button.nst-color-btn {
+	width: var(--nst-cell);
+	height: var(--nst-cell);
+	padding: 0;
+	justify-content: center;
+}
+
+.nst-toolbar .nst-block-btn {
+	flex: 1 1 auto;
+	width: 100%;
+	padding: 0 8px;
+	justify-content: flex-start;
+}
+
+.nst-toolbar svg {
+	width: 15px;
+	height: 15px;
+}
+
+.nst-toolbar .nst-chevron svg {
+	width: 12px;
+	height: 12px;
+	opacity: 0.6;
+}
+
+.nst-toolbar .nst-block-label {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	text-align: left;
+}
+
+.nst-toolbar .nst-color-a {
+	font-weight: 600;
+	font-family: var(--font-text, inherit);
+}
+
+.nst-toolbar .nst-comment-btn {
+	flex: 1 1 auto;
+	padding: 0 8px;
+	justify-content: flex-start;
+}
+
+.nst-toolbar .nst-comment-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.nst-callout-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	flex-shrink: 0;
+}
+
+.nst-sep {
+	width: 1px;
+	align-self: stretch;
+	margin: 4px 2px;
+	background: var(--background-modifier-border);
+	flex-shrink: 0;
+}
+
+/* Forces a wrap point so the icon buttons after it always start a fresh row,
+   keeping them aligned in a clean 4-per-row grid regardless of how wide the
+   block-type/color row above happens to be. */
+.nst-sep-break {
+	flex-basis: 100%;
+	width: 0;
+	height: 0;
+	margin: 0;
+	background: transparent;
+}
+
+/* Settings tab — live preview of the custom toolbar button's icon */
+.nst-icon-preview {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	margin-right: 8px;
+	color: var(--text-normal);
+}
+
+.nst-icon-preview svg {
+	width: 16px;
+	height: 16px;
+}
+
+/* Dropdown / popover panels */
+.nst-panel {
+	position: fixed;
+	z-index: calc(var(--layer-popover, 70) + 1);
+	overflow-y: auto;
+	background: var(--background-primary);
+	border: 1px solid var(--background-modifier-border);
+	border-radius: var(--radius-m, 8px);
+	box-shadow: var(--shadow-l, 0 4px 16px rgba(0, 0, 0, 0.2));
+	padding: 6px;
+	font-size: var(--font-ui-small);
+}
+
+.nst-panel-list {
+	min-width: 220px;
+	max-height: 60vh;
+	overflow-y: auto;
+}
+
+.nst-panel-item {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 8px;
+	border-radius: var(--radius-s, 4px);
+	color: var(--text-normal);
+	cursor: pointer;
+}
+
+.nst-panel-item:hover {
+	background: var(--background-modifier-hover);
+}
+
+.nst-panel-item-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 16px;
+	height: 16px;
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+
+.nst-panel-item-icon svg {
+	width: 15px;
+	height: 15px;
+}
+
+.nst-panel-item-label {
+	flex: 1;
+}
+
+.nst-panel-item-check {
+	display: flex;
+	color: var(--text-accent);
+}
+
+.nst-panel-item-check svg {
+	width: 14px;
+	height: 14px;
+}
+
+/* Color panel */
+.nst-panel-colors {
+	width: 232px;
+}
+
+.nst-panel-heading {
+	padding: 6px 4px 4px;
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+}
+
+.nst-swatch-row {
+	display: flex;
+	gap: 4px;
+	padding: 0 2px 4px;
+}
+
+.nst-swatch {
+	all: unset;
+	box-sizing: border-box;
+	width: 36px;
+	height: 32px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--radius-s, 4px);
+	border: 1px solid var(--background-modifier-border);
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.nst-swatch:hover {
+	border-color: var(--interactive-accent);
+}
+
+.nst-swatch-bg {
+	border-radius: var(--radius-s, 4px);
+}
+
+/* Link popover */
+.nst-panel-link {
+	width: 260px;
+}
+
+.nst-link-input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 6px 8px;
+	border-radius: var(--radius-s, 4px);
+	border: 1px solid var(--background-modifier-border);
+	background: var(--background-primary-alt);
+	color: var(--text-normal);
+	font-size: var(--font-ui-small);
+}
+
+.nst-link-input:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+}
+
+/* Toggle blocks (<details>/<summary>) inserted by the toolbar */
+.nst-toggle > summary {
+	cursor: pointer;
+	font-weight: inherit;
+}
+
+.nst-toggle > summary.nst-toggle-h1 {
+	font-size: 1.6em;
+	font-weight: 700;
+}
+
+.nst-toggle > summary.nst-toggle-h2 {
+	font-size: 1.35em;
+	font-weight: 700;
+}
+
+.nst-toggle > summary.nst-toggle-h3 {
+	font-size: 1.15em;
+	font-weight: 600;
+}
+
+.nst-toggle > summary.nst-toggle-h4 {
+	font-size: 1.05em;
+	font-weight: 600;
+}
+
+/* Columns block */
+.nst-columns {
+	display: flex;
+	gap: 24px;
+	align-items: flex-start;
+}
+
+.nst-column {
+	flex: 1 1 0;
+	min-width: 0;
+}
+
+/* ── Applied text/highlight colors ────────────────────────────────────────
+   Text/highlight colors are written into notes as named classes (nst-fg-*,
+   nst-hl-*), not baked-in hex — the color itself lives here, as CSS custom
+   properties. Light-mode values on :root, dark-mode overrides scoped to
+   body.theme-dark, so already-applied colors switch automatically when you
+   change Obsidian's theme instead of staying frozen at whatever was current
+   the moment you applied them. A highlight the user has customized in plugin
+   settings gets an inline override on <body> (see main.ts refreshColorVars)
+   that beats these defaults; text colors aren't customizable, so nst-fg-*
+   only ever reads the values below. Keep in sync with NOTION_COLORS in
+   colors.ts if either changes. */
+:root {
+	--nst-fg-gray: #787774;
+	--nst-fg-brown: #976D57;
+	--nst-fg-orange: #CC782F;
+	--nst-fg-yellow: #C29343;
+	--nst-fg-green: #548164;
+	--nst-fg-blue: #487CA5;
+	--nst-fg-purple: #8A67AB;
+	--nst-fg-pink: #B35488;
+	--nst-fg-red: #C4554D;
+
+	--nst-hl-gray: #D9D9D6;
+	--nst-hl-brown: #E1D4D0;
+	--nst-hl-orange: #EFD5BC;
+	--nst-hl-yellow: #EFE0BE;
+	--nst-hl-green: #CFDCD2;
+	--nst-hl-blue: #C9DBE7;
+	--nst-hl-purple: #E0D7E9;
+	--nst-hl-pink: #EBD2DF;
+	--nst-hl-red: #EFCECC;
+}
+body.theme-dark {
+	--nst-fg-gray: #9B9B9B;
+	--nst-fg-brown: #A27763;
+	--nst-fg-orange: #CB7B37;
+	--nst-fg-yellow: #C19138;
+	--nst-fg-green: #4F9768;
+	--nst-fg-blue: #447ACB;
+	--nst-fg-purple: #865DBB;
+	--nst-fg-pink: #BA4A78;
+	--nst-fg-red: #BE524B;
+
+	--nst-hl-gray: #333333;
+	--nst-hl-brown: #3C312C;
+	--nst-hl-orange: #483322;
+	--nst-hl-yellow: #483A23;
+	--nst-hl-green: #29382E;
+	--nst-hl-blue: #233240;
+	--nst-hl-purple: #352B41;
+	--nst-hl-pink: #3F2832;
+	--nst-hl-red: #442A28;
+}
+
+.nst-fg-gray { color: var(--nst-fg-gray); }
+.nst-fg-brown { color: var(--nst-fg-brown); }
+.nst-fg-orange { color: var(--nst-fg-orange); }
+.nst-fg-yellow { color: var(--nst-fg-yellow); }
+.nst-fg-green { color: var(--nst-fg-green); }
+.nst-fg-blue { color: var(--nst-fg-blue); }
+.nst-fg-purple { color: var(--nst-fg-purple); }
+.nst-fg-pink { color: var(--nst-fg-pink); }
+.nst-fg-red { color: var(--nst-fg-red); }
+
+/* color:inherit + normal weight, same reasoning as the old inline-style
+   version: a <mark> shouldn't recolor its own text or force bold. Padding/
+   line-height/border-radius are reset and pinned tight — some themes pad
+   <mark> generously for a "highlighter pen" look, which made ours look
+   noticeably taller than the surrounding text. */
+mark[class^="nst-hl-"] {
+	color: inherit;
+	font-weight: normal !important;
+	padding: 0 1px !important;
+	line-height: inherit !important;
+	border-radius: 2px !important;
+}
+.nst-hl-gray { background-color: var(--nst-hl-gray); }
+.nst-hl-brown { background-color: var(--nst-hl-brown); }
+.nst-hl-orange { background-color: var(--nst-hl-orange); }
+.nst-hl-yellow { background-color: var(--nst-hl-yellow); }
+.nst-hl-green { background-color: var(--nst-hl-green); }
+.nst-hl-blue { background-color: var(--nst-hl-blue); }
+.nst-hl-purple { background-color: var(--nst-hl-purple); }
+.nst-hl-pink { background-color: var(--nst-hl-pink); }
+.nst-hl-red { background-color: var(--nst-hl-red); }
