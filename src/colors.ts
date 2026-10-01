@@ -74,7 +74,7 @@ export function refreshHighlightColorVars(
 	const active = activeHighlightMap(highlightColorsLight, highlightColorsDark);
 	for (const def of NOTION_COLORS) {
 		const custom = active[def.id];
-		if (custom) document.body.style.setProperty(`--nst-hl-${def.id}`, custom);
-		else document.body.style.removeProperty(`--nst-hl-${def.id}`);
+		// An empty value removes the inline override so the CSS default applies.
+		document.body.setCssProps({ [`--nst-hl-${def.id}`]: custom ?? "" });
 	}
 }

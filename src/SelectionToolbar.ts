@@ -51,7 +51,7 @@ export class SelectionToolbar {
 
 	public hide(): void {
 		if (!this.visible && this.submenu === "none") return;
-		this.rootEl.style.display = "none";
+		this.rootEl.addClass("nst-hidden");
 		this.closePanel();
 		this.visible = false;
 		this.currentEditor = null;
@@ -67,8 +67,7 @@ export class SelectionToolbar {
 	// ---------- construction ----------
 
 	private build(): void {
-		this.rootEl = createDiv({ cls: "nst-toolbar" });
-		this.rootEl.style.display = "none";
+		this.rootEl = createDiv({ cls: ["nst-toolbar", "nst-hidden"] });
 		document.body.appendChild(this.rootEl);
 
 		this.rootEl.addEventListener("mousedown", (e) => {
@@ -300,10 +299,9 @@ export class SelectionToolbar {
 
 	private positionAt(rect: DOMRect): void {
 		const margin = 8;
-		this.rootEl.style.visibility = "hidden";
-		this.rootEl.style.display = "flex";
-		this.rootEl.style.left = "0px";
-		this.rootEl.style.top = "0px";
+		this.rootEl.addClass("nst-measuring");
+		this.rootEl.removeClass("nst-hidden");
+		this.rootEl.setCssStyles({ left: "0px", top: "0px" });
 		const toolbarRect = this.rootEl.getBoundingClientRect();
 
 		let top = rect.top - toolbarRect.height - margin;
@@ -311,9 +309,8 @@ export class SelectionToolbar {
 		let left = rect.left + rect.width / 2 - toolbarRect.width / 2;
 		left = Math.max(4, Math.min(left, window.innerWidth - toolbarRect.width - 4));
 
-		this.rootEl.style.left = `${left}px`;
-		this.rootEl.style.top = `${top}px`;
-		this.rootEl.style.visibility = "visible";
+		this.rootEl.setCssStyles({ left: `${left}px`, top: `${top}px` });
+		this.rootEl.removeClass("nst-measuring");
 	}
 
 	/**
@@ -324,23 +321,20 @@ export class SelectionToolbar {
 	private positionPanel(anchor: HTMLElement): void {
 		if (!this.panelEl) return;
 		const anchorRect = anchor.getBoundingClientRect();
-		this.panelEl.style.visibility = "hidden";
-		this.panelEl.style.left = "0px";
-		this.panelEl.style.top = "0px";
-		this.panelEl.style.maxHeight = "";
+		this.panelEl.addClass("nst-measuring");
+		this.panelEl.setCssStyles({ left: "0px", top: "0px", maxHeight: "" });
 		const panelRect = this.panelEl.getBoundingClientRect();
 
 		const top = anchorRect.bottom + 6;
 		const available = window.innerHeight - top - 4;
 		if (panelRect.height > available) {
-			this.panelEl.style.maxHeight = `${Math.max(120, available)}px`;
+			this.panelEl.setCssStyles({ maxHeight: `${Math.max(120, available)}px` });
 		}
 		let left = anchorRect.left;
 		left = Math.max(4, Math.min(left, window.innerWidth - panelRect.width - 4));
 
-		this.panelEl.style.left = `${left}px`;
-		this.panelEl.style.top = `${top}px`;
-		this.panelEl.style.visibility = "visible";
+		this.panelEl.setCssStyles({ left: `${left}px`, top: `${top}px` });
+		this.panelEl.removeClass("nst-measuring");
 	}
 
 	// ---------- submenus ----------
@@ -414,7 +408,7 @@ export class SelectionToolbar {
 		for (const type of CALLOUT_TYPES) {
 			const row = panelEl.createDiv({ cls: "nst-panel-item" });
 			const dot = row.createSpan({ cls: "nst-callout-dot" });
-			dot.style.backgroundColor = `rgb(var(--callout-${type.id}))`;
+			dot.setCssStyles({ backgroundColor: `rgb(var(--callout-${type.id}))` });
 			const iconEl = row.createSpan({ cls: "nst-panel-item-icon" });
 			setIcon(iconEl, type.icon);
 			row.createSpan({ cls: "nst-panel-item-label", text: type.label });
@@ -468,10 +462,10 @@ export class SelectionToolbar {
 			btn.setText("A");
 			// References the same CSS variable the applied `nst-fg-*` class uses, so
 			// the swatch preview is never out of sync with what clicking it produces.
-			btn.style.color = def ? `var(--nst-fg-${def.id})` : "var(--text-normal)";
+			btn.setCssStyles({ color: def ? `var(--nst-fg-${def.id})` : "var(--text-normal)" });
 		} else {
 			btn.addClass("nst-swatch-bg");
-			btn.style.backgroundColor = def ? `var(--nst-hl-${def.id})` : "transparent";
+			btn.setCssStyles({ backgroundColor: def ? `var(--nst-hl-${def.id})` : "transparent" });
 		}
 		btn.addEventListener("click", (e) => {
 			e.preventDefault();

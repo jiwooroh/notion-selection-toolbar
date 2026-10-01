@@ -379,3 +379,12 @@ mark[class^="nst-hl-"] {
 .nst-hl-purple { background-color: var(--nst-hl-purple); }
 .nst-hl-pink { background-color: var(--nst-hl-pink); }
 .nst-hl-red { background-color: var(--nst-hl-red); }
+
+/* Toolbar/panel state classes (toggled from SelectionToolbar.ts). */
+.nst-toolbar.nst-hidden {
+	display: none;
+}
+
+.nst-measuring {
+	visibility: hidden;
+}
