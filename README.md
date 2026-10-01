@@ -22,13 +22,13 @@ A Notion-style floating toolbar for [Obsidian](https://obsidian.md). Select some
 └──────────────────────────────┘
 ```
 
-<!-- ![Toolbar](images/toolbar.png) -->
+<img src="images/toolbar.png" alt="Toolbar" width="480">
 
 ### Turn into (block type)
 
 The top button shows the current line's block type (e.g. `Heading 2`). Click it to convert the selected line or lines:
 
-<!-- ![Turn into menu](images/turn-into.png) -->
+<img src="images/turn-into.png" alt="Turn into menu" width="420">
 
 | Menu item | Result |
 | --- | --- |
@@ -44,20 +44,18 @@ The top button shows the current line's block type (e.g. `Heading 2`). Click it 
 | **Page** | Moves the selection into a new note in the same folder and leaves a `[[wikilink]]` in its place. The first line of the selection becomes the note's title |
 | **Page in** | Same as Page, but first asks which folder to create the note in |
 
-<!-- ![Callout submenu](images/callout.png) -->
-
 ### Colors
 
 Click **A** to open the color panel:
 
-<!-- ![Color panel](images/colors.png) -->
+<img src="images/colors.png" alt="Color panel" width="440">
 
 - **Text color**: 9 Notion colors (gray, brown, orange, yellow, green, blue, purple, pink, red)
 - **Background color**: the same 9 colors as highlights
 - **Default**: removes the color from the selection
 - **Recently used**: your last 5 colors
 
-<!-- ![Colored and highlighted text in a note](images/colors-result.png) -->
+<img src="images/colors-result.png" alt="Colored and highlighted text in a note" width="600">
 
 Press **Cmd/Ctrl + Shift + H** to apply your most recently used color to the selection without opening the toolbar.
 
@@ -89,7 +87,7 @@ Every button toggles: click it again on the same selection to remove the formatt
 
 Go to **Settings → Notion Selection Toolbar**:
 
-<!-- ![Settings](images/settings.png) -->
+<img src="images/settings.png" alt="Settings" width="600">
 
 - **Light / Dark theme highlight colors**: change each background color separately for light and dark mode. Use the ↺ button to reset a color to its default. Highlights already in your notes update immediately.
 - **Custom toolbar button**
