@@ -80,7 +80,7 @@ Every button toggles: click it again on the same selection to remove the formatt
 ### Other buttons
 
 - **More (⋯)**: opens Obsidian's command palette.
-- **Comment**: adds a comment to the selection. Requires the **Document Comments** plugin to be installed and enabled.
+- **Comment**: adds a comment to the selection. Requires the **[Document Comments](https://github.com/jiwooroh/obsidian-document-comments)** plugin to be installed and enabled.
 - **Custom button (✨)**: runs any command you assign to it in settings (see below).
 
 ## Settings
