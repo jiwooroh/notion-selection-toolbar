@@ -362,7 +362,12 @@ body.theme-dark {
    version: a <mark> shouldn't recolor its own text or force bold. Padding/
    line-height/border-radius are reset and pinned tight — some themes pad
    <mark> generously for a "highlighter pen" look, which made ours look
-   noticeably taller than the surrounding text. */
+   noticeably taller than the surrounding text.
+   The .markdown-rendered variants below exist because Obsidian's own
+   `.markdown-rendered mark { background-color: var(--text-highlight-bg) }`
+   (0,1,1) outranks a bare `.nst-hl-*` (0,1,0) — so in reading view and in
+   PDF export (which renders through reading view) every highlight fell back
+   to the default yellow. (0,2,0) wins without resorting to !important. */
 mark[class^="nst-hl-"] {
 	color: inherit;
 	font-weight: normal !important;
@@ -370,15 +375,24 @@ mark[class^="nst-hl-"] {
 	line-height: inherit !important;
 	border-radius: 2px !important;
 }
-.nst-hl-gray { background-color: var(--nst-hl-gray); }
-.nst-hl-brown { background-color: var(--nst-hl-brown); }
-.nst-hl-orange { background-color: var(--nst-hl-orange); }
-.nst-hl-yellow { background-color: var(--nst-hl-yellow); }
-.nst-hl-green { background-color: var(--nst-hl-green); }
-.nst-hl-blue { background-color: var(--nst-hl-blue); }
-.nst-hl-purple { background-color: var(--nst-hl-purple); }
-.nst-hl-pink { background-color: var(--nst-hl-pink); }
-.nst-hl-red { background-color: var(--nst-hl-red); }
+.nst-hl-gray,
+.markdown-rendered .nst-hl-gray { background-color: var(--nst-hl-gray); }
+.nst-hl-brown,
+.markdown-rendered .nst-hl-brown { background-color: var(--nst-hl-brown); }
+.nst-hl-orange,
+.markdown-rendered .nst-hl-orange { background-color: var(--nst-hl-orange); }
+.nst-hl-yellow,
+.markdown-rendered .nst-hl-yellow { background-color: var(--nst-hl-yellow); }
+.nst-hl-green,
+.markdown-rendered .nst-hl-green { background-color: var(--nst-hl-green); }
+.nst-hl-blue,
+.markdown-rendered .nst-hl-blue { background-color: var(--nst-hl-blue); }
+.nst-hl-purple,
+.markdown-rendered .nst-hl-purple { background-color: var(--nst-hl-purple); }
+.nst-hl-pink,
+.markdown-rendered .nst-hl-pink { background-color: var(--nst-hl-pink); }
+.nst-hl-red,
+.markdown-rendered .nst-hl-red { background-color: var(--nst-hl-red); }
 
 /* Toolbar/panel state classes (toggled from SelectionToolbar.ts). */
 .nst-toolbar.nst-hidden {
