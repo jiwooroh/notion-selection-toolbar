@@ -66,7 +66,15 @@ export default class NotionToolbarPlugin extends Plugin {
 		});
 
 		this.registerDomEvent(document, "selectionchange", this.scheduleEvaluate);
-		this.registerDomEvent(window, "resize", () => this.toolbar.hide());
+		// Re-check rather than hide on resize: on iPad the on-screen keyboard and
+		// shortcut bar resize the window right as a selection is made, which used to
+		// hide the toolbar immediately after it appeared.
+		this.registerDomEvent(window, "resize", this.scheduleEvaluate);
+		const vv = window.visualViewport;
+		if (vv) {
+			vv.addEventListener("resize", this.scheduleEvaluate);
+			this.register(() => vv.removeEventListener("resize", this.scheduleEvaluate));
+		}
 		this.registerEvent(this.app.workspace.on("active-leaf-change", () => this.toolbar.hide()));
 		this.registerEvent(this.app.workspace.on("file-open", () => this.toolbar.hide()));
 		// Fires on theme/appearance changes (light↔dark, snippet toggles, …) — keep
@@ -99,7 +107,7 @@ export default class NotionToolbarPlugin extends Plugin {
 	};
 
 	private evaluateSelection(): void {
-		if (this.toolbar.isMenuOpen()) return;
+		if (this.toolbar.isMenuOpen() || this.toolbar.isInteracting()) return;
 
 		const view = this.app.workspace.getActiveViewOfType(MarkdownView);
 		if (!view || view.getMode() !== "source") {

@@ -1,4 +1,4 @@
-import { App, Editor, Notice, setIcon } from "obsidian";
+import { App, Editor, Notice, Platform, setIcon } from "obsidian";
 import { applyBlockTypeAction, BLOCK_MENU_ITEMS, CALLOUT_TYPES, DETECTED_LABELS } from "./blockTypes";
 import { ColorKind, findColor, NOTION_COLORS } from "./colors";
 import {
@@ -11,7 +11,9 @@ import {
 } from "./textCommands";
 import type NotionToolbarPlugin from "./main";
 
-const COMMENT_COMMAND_ID = "document-comments:add-comment";
+// Obsidian's built-in "Toggle comment" (Cmd/Ctrl+/), which wraps the selection in
+// %%…%% — the same native Markdown comment every other Obsidian feature understands.
+const TOGGLE_COMMENT_COMMAND_ID = "editor:toggle-comments";
 
 type Submenu = "none" | "blocktype" | "color" | "link" | "callout";
 
@@ -31,6 +33,11 @@ export class SelectionToolbar {
 	private submenu: Submenu = "none";
 	private currentEditor: Editor | null = null;
 	private visible = false;
+	/** True while a finger/pointer is down on the toolbar or one of its panels. On
+	 *  touch devices (iPad) that tap can briefly collapse the DOM selection, which
+	 *  would otherwise make the selection watcher hide the toolbar mid-tap. */
+	private interacting = false;
+	private interactTimer = 0;
 
 	constructor(app: App, plugin: NotionToolbarPlugin) {
 		this.app = app;
@@ -40,6 +47,14 @@ export class SelectionToolbar {
 
 	public isMenuOpen(): boolean {
 		return this.submenu !== "none";
+	}
+
+	public isInteracting(): boolean {
+		return this.interacting;
+	}
+
+	public isVisible(): boolean {
+		return this.visible;
 	}
 
 	public showForSelection(editor: Editor, rect: DOMRect): void {
@@ -59,6 +74,10 @@ export class SelectionToolbar {
 
 	public destroy(): void {
 		document.removeEventListener("mousedown", this.onDocMouseDown, true);
+		document.removeEventListener("pointerdown", this.onDocPointerDown, true);
+		document.removeEventListener("pointerup", this.onDocPointerUp, true);
+		document.removeEventListener("pointercancel", this.onDocPointerUp, true);
+		window.clearTimeout(this.interactTimer);
 		document.removeEventListener("keydown", this.onKeyDown);
 		this.closePanel();
 		this.rootEl.remove();
@@ -144,6 +163,9 @@ export class SelectionToolbar {
 		});
 
 		document.addEventListener("mousedown", this.onDocMouseDown, true);
+		document.addEventListener("pointerdown", this.onDocPointerDown, true);
+		document.addEventListener("pointerup", this.onDocPointerUp, true);
+		document.addEventListener("pointercancel", this.onDocPointerUp, true);
 		document.addEventListener("keydown", this.onKeyDown);
 	}
 
@@ -213,13 +235,12 @@ export class SelectionToolbar {
 	}
 
 	private addComment(): void {
-		const commands = this.getAppCommands();
-		const hasCommentPlugin = !!commands?.commands?.[COMMENT_COMMAND_ID];
-		if (!hasCommentPlugin) {
-			new Notice("Install and enable the \"Document Comments\" plugin to add comments.");
-			return;
-		}
-		commands.executeCommandById(COMMENT_COMMAND_ID);
+		const editor = this.currentEditor;
+		if (!editor) return;
+		editor.focus();
+		const ran = this.getAppCommands()?.executeCommandById(TOGGLE_COMMENT_COMMAND_ID);
+		if (!ran) toggleInlineWrap(editor, "%%");
+		this.refreshAfterEdit();
 	}
 
 	private runCustomButtonCommand(): void {
@@ -304,8 +325,18 @@ export class SelectionToolbar {
 		this.rootEl.setCssStyles({ left: "0px", top: "0px" });
 		const toolbarRect = this.rootEl.getBoundingClientRect();
 
-		let top = rect.top - toolbarRect.height - margin;
-		if (top < 4) top = rect.bottom + margin;
+		// On touch devices the OS draws its own Copy/Paste menu above the selection,
+		// so go below it there; on desktop prefer above, like Notion.
+		const above = rect.top - toolbarRect.height - margin;
+		const below = rect.bottom + margin;
+		const viewportH = window.visualViewport?.height ?? window.innerHeight;
+		let top: number;
+		if (Platform.isMobile) {
+			top = below + toolbarRect.height <= viewportH - 4 ? below : above;
+		} else {
+			top = above >= 4 ? above : below;
+		}
+		top = Math.max(4, top);
 		let left = rect.left + rect.width / 2 - toolbarRect.width / 2;
 		left = Math.max(4, Math.min(left, window.innerWidth - toolbarRect.width - 4));
 
@@ -499,6 +530,25 @@ export class SelectionToolbar {
 	}
 
 	// ---------- global dismissal ----------
+
+	private isInsideToolbar(target: EventTarget | null): boolean {
+		if (!(target instanceof Node)) return false;
+		return this.rootEl.contains(target) || !!this.panelEl?.contains(target);
+	}
+
+	private onDocPointerDown = (e: PointerEvent): void => {
+		if (!this.isInsideToolbar(e.target)) return;
+		window.clearTimeout(this.interactTimer);
+		this.interacting = true;
+	};
+
+	private onDocPointerUp = (): void => {
+		if (!this.interacting) return;
+		// Let the click (and the editor.focus() it triggers) settle before the
+		// selection watcher is allowed to react again.
+		window.clearTimeout(this.interactTimer);
+		this.interactTimer = window.setTimeout(() => (this.interacting = false), 400);
+	};
 
 	private onDocMouseDown = (e: MouseEvent): void => {
 		if (this.submenu === "none") return;

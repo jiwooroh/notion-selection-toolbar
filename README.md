@@ -82,9 +82,7 @@ Every button toggles: click it again on the same selection to remove the formatt
 ### Other buttons
 
 - **More (⋯)**: opens Obsidian's command palette.
-- **Comment**: adds a comment to the selection. Requires the [Document Comments](obsidian://show-plugin?id=notion-style-comments) plugin to be installed and enabled.
-
-  <img src="images/comment.png" alt="Comments highlighted in a note with the Document Comments plugin" width="480">
+- **Comment**: turns the selection into a native Obsidian comment, `%%text%%`, by running Obsidian's built-in **Toggle comment** command (the same as `Cmd/Ctrl + /`). Click again to remove the comment. Comments are hidden in Reading view and exports, and work anywhere Obsidian handles `%%` comments.
 
 - **Custom button (✨)**: runs any command you assign to it in settings (see below).
 
