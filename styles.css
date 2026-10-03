@@ -307,45 +307,45 @@
    colors.ts if either changes. */
 :root {
 	--nst-fg-gray: #787774;
-	--nst-fg-brown: #976D57;
-	--nst-fg-orange: #CC782F;
-	--nst-fg-yellow: #C29343;
-	--nst-fg-green: #548164;
-	--nst-fg-blue: #487CA5;
-	--nst-fg-purple: #8A67AB;
-	--nst-fg-pink: #B35488;
-	--nst-fg-red: #C4554D;
+	--nst-fg-brown: #9E6B53;
+	--nst-fg-orange: #C86F21;
+	--nst-fg-yellow: #B57E33;
+	--nst-fg-green: #458262;
+	--nst-fg-blue: #347EA9;
+	--nst-fg-purple: #9165B0;
+	--nst-fg-pink: #C14C8A;
+	--nst-fg-red: #D34C47;
 
-	--nst-hl-gray: #D9D9D6;
-	--nst-hl-brown: #E1D4D0;
-	--nst-hl-orange: #EFD5BC;
-	--nst-hl-yellow: #EFE0BE;
-	--nst-hl-green: #CFDCD2;
-	--nst-hl-blue: #C9DBE7;
-	--nst-hl-purple: #E0D7E9;
-	--nst-hl-pink: #EBD2DF;
-	--nst-hl-red: #EFCECC;
+	--nst-hl-gray: #F1F1EF;
+	--nst-hl-brown: #F4EEEE;
+	--nst-hl-orange: #FBEDE7;
+	--nst-hl-yellow: #F4F1E5;
+	--nst-hl-green: #EDF3EB;
+	--nst-hl-blue: #E7F3F8;
+	--nst-hl-purple: #F4F0F7;
+	--nst-hl-pink: #F9EEF3;
+	--nst-hl-red: #FDEBEC;
 }
 body.theme-dark {
-	--nst-fg-gray: #9B9B9B;
-	--nst-fg-brown: #A27763;
-	--nst-fg-orange: #CB7B37;
-	--nst-fg-yellow: #C19138;
-	--nst-fg-green: #4F9768;
-	--nst-fg-blue: #447ACB;
-	--nst-fg-purple: #865DBB;
-	--nst-fg-pink: #BA4A78;
-	--nst-fg-red: #BE524B;
+	--nst-fg-gray: #9FA4A8;
+	--nst-fg-brown: #D49675;
+	--nst-fg-orange: #E98D36;
+	--nst-fg-yellow: #C99D46;
+	--nst-fg-green: #72B183;
+	--nst-fg-blue: #66AADA;
+	--nst-fg-purple: #B098D8;
+	--nst-fg-pink: #DE84D1;
+	--nst-fg-red: #EA878C;
 
-	--nst-hl-gray: #333333;
-	--nst-hl-brown: #3C312C;
-	--nst-hl-orange: #483322;
-	--nst-hl-yellow: #483A23;
-	--nst-hl-green: #29382E;
-	--nst-hl-blue: #233240;
-	--nst-hl-purple: #352B41;
-	--nst-hl-pink: #3F2832;
-	--nst-hl-red: #442A28;
+	--nst-hl-gray: #3C4144;
+	--nst-hl-brown: #4C3E35;
+	--nst-hl-orange: #553B29;
+	--nst-hl-yellow: #4A3E2C;
+	--nst-hl-green: #2F443A;
+	--nst-hl-blue: #2D4156;
+	--nst-hl-purple: #453A5B;
+	--nst-hl-pink: #51384D;
+	--nst-hl-red: #5E3436;
 }
 
 .nst-fg-gray { color: var(--nst-fg-gray); }

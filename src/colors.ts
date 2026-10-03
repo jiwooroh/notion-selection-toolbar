@@ -9,26 +9,20 @@ export interface ColorDef {
 	bgDark: string;
 }
 
-/** Notion's default text color palette (9 colors + default), as Notion itself
- *  renders it — kept as-is, unchanged from Notion's real values.
- *
- *  The highlight (background) values below are NOT Notion's actual pale
- *  washes — those read as too faint against a typical Obsidian page, so each
- *  bg/bgDark is deliberately deepened (~20% light / ~12% dark blend of the
- *  matching fg hue into Notion's original bg) for better visibility while
- *  keeping the same hue family. These are also the source of truth for the
- *  static `--nst-fg-*`/`--nst-hl-*` defaults hand-written into styles.css —
- *  keep the two in sync if either changes. */
+/** Notion's default text and background color palettes (9 colors + default),
+ *  for both light and dark mode, as Notion itself renders them. These are also
+ *  the source of truth for the static `--nst-fg-*`/`--nst-hl-*` defaults
+ *  hand-written into styles.css — keep the two in sync if either changes. */
 export const NOTION_COLORS: ColorDef[] = [
-	{ id: "gray", label: "Gray", fg: "#787774", bg: "#D9D9D6", fgDark: "#9B9B9B", bgDark: "#333333" },
-	{ id: "brown", label: "Brown", fg: "#976D57", bg: "#E1D4D0", fgDark: "#A27763", bgDark: "#3C312C" },
-	{ id: "orange", label: "Orange", fg: "#CC782F", bg: "#EFD5BC", fgDark: "#CB7B37", bgDark: "#483322" },
-	{ id: "yellow", label: "Yellow", fg: "#C29343", bg: "#EFE0BE", fgDark: "#C19138", bgDark: "#483A23" },
-	{ id: "green", label: "Green", fg: "#548164", bg: "#CFDCD2", fgDark: "#4F9768", bgDark: "#29382E" },
-	{ id: "blue", label: "Blue", fg: "#487CA5", bg: "#C9DBE7", fgDark: "#447ACB", bgDark: "#233240" },
-	{ id: "purple", label: "Purple", fg: "#8A67AB", bg: "#E0D7E9", fgDark: "#865DBB", bgDark: "#352B41" },
-	{ id: "pink", label: "Pink", fg: "#B35488", bg: "#EBD2DF", fgDark: "#BA4A78", bgDark: "#3F2832" },
-	{ id: "red", label: "Red", fg: "#C4554D", bg: "#EFCECC", fgDark: "#BE524B", bgDark: "#442A28" },
+	{ id: "gray", label: "Gray", fg: "#787774", bg: "#F1F1EF", fgDark: "#9FA4A8", bgDark: "#3C4144" },
+	{ id: "brown", label: "Brown", fg: "#9E6B53", bg: "#F4EEEE", fgDark: "#D49675", bgDark: "#4C3E35" },
+	{ id: "orange", label: "Orange", fg: "#C86F21", bg: "#FBEDE7", fgDark: "#E98D36", bgDark: "#553B29" },
+	{ id: "yellow", label: "Yellow", fg: "#B57E33", bg: "#F4F1E5", fgDark: "#C99D46", bgDark: "#4A3E2C" },
+	{ id: "green", label: "Green", fg: "#458262", bg: "#EDF3EB", fgDark: "#72B183", bgDark: "#2F443A" },
+	{ id: "blue", label: "Blue", fg: "#347EA9", bg: "#E7F3F8", fgDark: "#66AADA", bgDark: "#2D4156" },
+	{ id: "purple", label: "Purple", fg: "#9165B0", bg: "#F4F0F7", fgDark: "#B098D8", bgDark: "#453A5B" },
+	{ id: "pink", label: "Pink", fg: "#C14C8A", bg: "#F9EEF3", fgDark: "#DE84D1", bgDark: "#51384D" },
+	{ id: "red", label: "Red", fg: "#D34C47", bg: "#FDEBEC", fgDark: "#EA878C", bgDark: "#5E3436" },
 ];
 
 export type ColorKind = "text" | "background";
