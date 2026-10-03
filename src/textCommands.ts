@@ -186,14 +186,44 @@ function toggleWrapText(text: string, prefix: string, suffix: string): string {
 // class-based markup or the older inline-style one).
 const HTML_WRAP_RE = /^(<(span|mark)\b[^>]*>)([\s\S]*)(<\/\2>)$/;
 
+/** Markdown inline markers and the HTML tag that replaces each one inside a
+ *  color/highlight tag. Live Preview renders a raw inline HTML tag as a single
+ *  HTML widget, so Markdown inside it (`<span>**x**</span>`) shows up literally
+ *  and Markdown around it (`**<span>x</span>**`) doesn't reach the widget —
+ *  only real HTML tags render in both Live Preview and Reading view. Longest
+ *  marker first so `**` isn't mistaken for two `*`. */
+const MD_TO_HTML: [string, string, string][] = [
+	["**", "<strong>", "</strong>"],
+	["__", "<strong>", "</strong>"],
+	["~~", "<s>", "</s>"],
+	["*", "<em>", "</em>"],
+	["_", "<em>", "</em>"],
+	["`", "<code>", "</code>"],
+];
+
+/** Rewrites Markdown markers that wrap the whole of `text` (possibly nested,
+ *  e.g. `***x***`) as their HTML tags, for content going inside an HTML tag. */
+function markdownWrapsToHtml(text: string): string {
+	for (const [md, open, close] of MD_TO_HTML) {
+		if (text.length > md.length * 2 && text.startsWith(md) && text.endsWith(md)) {
+			return open + markdownWrapsToHtml(text.slice(md.length, -md.length)) + close;
+		}
+	}
+	return text;
+}
+
+/** HTML equivalent of a Markdown prefix/suffix pair, or the pair unchanged if
+ *  it's already HTML (e.g. `<u>`). */
+function htmlWrapFor(prefix: string, suffix: string): [string, string] {
+	const hit = MD_TO_HTML.find(([md]) => md === prefix && prefix === suffix);
+	return hit ? [hit[1], hit[2]] : [prefix, suffix];
+}
+
 /** Toggle-wraps the selection with prefix/suffix, undoing the wrap if it's already applied.
  *
- *  When the selection is exactly a color/highlight <span>/<mark>, the prefix/suffix go
- *  INSIDE the tag instead of around it. Obsidian's Live Preview reliably renders
- *  emphasis markers found inside a raw inline HTML tag's own text, but often fails
- *  to render delimiters that wrap AROUND the whole tag from outside — a known Live
- *  Preview parser limitation (Reading view handles either fine). So applying a color
- *  and then Bold on that same selection only renders correctly this way around. */
+ *  When the selection is exactly a color/highlight <span>/<mark>, the formatting goes
+ *  INSIDE the tag as real HTML (`**` → `<strong>`, see MD_TO_HTML) instead of
+ *  Markdown, which Live Preview doesn't render inside or around an HTML tag. */
 export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string = prefix): void {
 	const fromPos = editor.getCursor("from");
 	const toPos = editor.getCursor("to");
@@ -203,7 +233,11 @@ export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string 
 	const htmlWrap = HTML_WRAP_RE.exec(selected);
 	if (htmlWrap) {
 		const [, open, , inner, close] = htmlWrap;
-		const replacement = `${open}${toggleWrapText(inner ?? "", prefix, suffix)}${close}`;
+		const [htmlPrefix, htmlSuffix] = htmlWrapFor(prefix, suffix);
+		// Normalize any Markdown already inside (from older versions) to HTML first,
+		// so toggling bold off a `<span>**x**</span>` still works.
+		const body = markdownWrapsToHtml(inner ?? "");
+		const replacement = `${open}${toggleWrapText(body, htmlPrefix, htmlSuffix)}${close}`;
 		editor.replaceRange(replacement, fromPos, toPos);
 		const fromOff = editor.posToOffset(fromPos);
 		editor.setSelection(fromPos, editor.offsetToPos(fromOff + replacement.length));
@@ -249,7 +283,11 @@ export function clearFormatting(editor: Editor): void {
 	// SPAN_RE/MARK_RE below, so re-clearing text colored by an earlier version works too.
 	text = text.replace(/<span (?:class|style)="[^"]*">([\s\S]*?)<\/span>/g, "$1");
 	text = text.replace(/<mark (?:class|style)="[^"]*">([\s\S]*?)<\/mark>/g, "$1");
-	text = text.replace(/<u>([\s\S]*?)<\/u>/g, "$1");
+	// Repeat so nested tags (<strong><em>…) all come off, not just the outermost.
+	for (let prev = ""; prev !== text; ) {
+		prev = text;
+		text = text.replace(/<(u|strong|b|em|i|s|code)>([\s\S]*?)<\/\1>/g, "$2");
+	}
 	text = text.replace(/(\*\*\*|___)([\s\S]*?)\1/g, "$2");
 	text = text.replace(/(\*\*|__)([\s\S]*?)\1/g, "$2");
 	text = text.replace(/(\*|_)([\s\S]*?)\1/g, "$2");
@@ -296,10 +334,13 @@ export function applyColor(editor: Editor, kind: ColorKind, colorId: string): vo
 	} else {
 		const def = findColor(colorId);
 		if (!def) return;
+		// Bold/italic/etc. already on the selection must become HTML once it's
+		// inside the color tag, or Live Preview shows the raw `**`.
+		const body = markdownWrapsToHtml(inner);
 		replacement =
 			kind === "text"
-				? `<span class="nst-fg-${def.id}">${inner}</span>`
-				: `<mark class="nst-hl-${def.id}">${inner}</mark>`;
+				? `<span class="nst-fg-${def.id}">${body}</span>`
+				: `<mark class="nst-hl-${def.id}">${body}</mark>`;
 	}
 
 	editor.replaceRange(replacement, fromPos, toPos);

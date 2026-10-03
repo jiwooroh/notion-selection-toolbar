@@ -307,14 +307,23 @@
    colors.ts if either changes. */
 :root {
 	--nst-fg-gray: #888784;
+	--nst-fg-gray-bold: #787774;
 	--nst-fg-brown: #976D57;
+	--nst-fg-brown-bold: #976D57;
 	--nst-fg-orange: #D1873F;
+	--nst-fg-orange-bold: #CC782F;
 	--nst-fg-yellow: #C29343;
+	--nst-fg-yellow-bold: #C29343;
 	--nst-fg-green: #679176;
+	--nst-fg-green-bold: #548164;
 	--nst-fg-blue: #487CA5;
+	--nst-fg-blue-bold: #487CA5;
 	--nst-fg-purple: #8A67AB;
+	--nst-fg-purple-bold: #8A67AB;
 	--nst-fg-pink: #B75D8F;
+	--nst-fg-pink-bold: #B35488;
 	--nst-fg-red: #C4554D;
+	--nst-fg-red-bold: #C4554D;
 
 	--nst-hl-gray: #F1F1EF;
 	--nst-hl-brown: #F3EEEE;
@@ -328,14 +337,23 @@
 }
 body.theme-dark {
 	--nst-fg-gray: #8F8F8F;
+	--nst-fg-gray-bold: #9B9B9B;
 	--nst-fg-brown: #B28773;
+	--nst-fg-brown-bold: #B28773;
 	--nst-fg-orange: #AD774D;
+	--nst-fg-orange-bold: #BD8052;
 	--nst-fg-yellow: #C29A56;
+	--nst-fg-yellow-bold: #C29A56;
 	--nst-fg-green: #5C8C6B;
+	--nst-fg-green-bold: #659C75;
 	--nst-fg-blue: #6786C4;
+	--nst-fg-blue-bold: #6786C4;
 	--nst-fg-purple: #956ACD;
+	--nst-fg-purple-bold: #956ACD;
 	--nst-fg-pink: #B85A8C;
+	--nst-fg-pink-bold: #C25F94;
 	--nst-fg-red: #CF5D57;
+	--nst-fg-red-bold: #CF5D57;
 
 	--nst-hl-gray: #2F2F2F;
 	--nst-hl-brown: #46332A;
@@ -357,6 +375,37 @@ body.theme-dark {
 .nst-fg-purple { color: var(--nst-fg-purple); }
 .nst-fg-pink { color: var(--nst-fg-pink); }
 .nst-fg-red { color: var(--nst-fg-red); }
+
+/* Bold colored text uses the bold variant of its color. Covers bold written
+   inside the color tag (<span class="nst-fg-red"><strong>…) — what the toolbar
+   writes — and Reading view's **<span class="nst-fg-red">…</span>**. */
+.nst-fg-gray :is(strong, b),
+:is(strong, b) .nst-fg-gray,
+:is(strong, b).nst-fg-gray { color: var(--nst-fg-gray-bold); }
+.nst-fg-brown :is(strong, b),
+:is(strong, b) .nst-fg-brown,
+:is(strong, b).nst-fg-brown { color: var(--nst-fg-brown-bold); }
+.nst-fg-orange :is(strong, b),
+:is(strong, b) .nst-fg-orange,
+:is(strong, b).nst-fg-orange { color: var(--nst-fg-orange-bold); }
+.nst-fg-yellow :is(strong, b),
+:is(strong, b) .nst-fg-yellow,
+:is(strong, b).nst-fg-yellow { color: var(--nst-fg-yellow-bold); }
+.nst-fg-green :is(strong, b),
+:is(strong, b) .nst-fg-green,
+:is(strong, b).nst-fg-green { color: var(--nst-fg-green-bold); }
+.nst-fg-blue :is(strong, b),
+:is(strong, b) .nst-fg-blue,
+:is(strong, b).nst-fg-blue { color: var(--nst-fg-blue-bold); }
+.nst-fg-purple :is(strong, b),
+:is(strong, b) .nst-fg-purple,
+:is(strong, b).nst-fg-purple { color: var(--nst-fg-purple-bold); }
+.nst-fg-pink :is(strong, b),
+:is(strong, b) .nst-fg-pink,
+:is(strong, b).nst-fg-pink { color: var(--nst-fg-pink-bold); }
+.nst-fg-red :is(strong, b),
+:is(strong, b) .nst-fg-red,
+:is(strong, b).nst-fg-red { color: var(--nst-fg-red-bold); }
 
 /* color:inherit + normal weight, same reasoning as the old inline-style
    version: a <mark> shouldn't recolor its own text or force bold. Padding/
