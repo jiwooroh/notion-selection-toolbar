@@ -14,15 +14,15 @@ export interface ColorDef {
  *  the source of truth for the static `--nst-fg-*`/`--nst-hl-*` defaults
  *  hand-written into styles.css — keep the two in sync if either changes. */
 export const NOTION_COLORS: ColorDef[] = [
-	{ id: "gray", label: "Gray", fg: "#787774", bg: "#F1F1EF", fgDark: "#9FA4A8", bgDark: "#3C4144" },
-	{ id: "brown", label: "Brown", fg: "#9E6B53", bg: "#F4EEEE", fgDark: "#D49675", bgDark: "#4C3E35" },
-	{ id: "orange", label: "Orange", fg: "#C86F21", bg: "#FBEDE7", fgDark: "#E98D36", bgDark: "#553B29" },
-	{ id: "yellow", label: "Yellow", fg: "#B57E33", bg: "#F4F1E5", fgDark: "#C99D46", bgDark: "#4A3E2C" },
-	{ id: "green", label: "Green", fg: "#458262", bg: "#EDF3EB", fgDark: "#72B183", bgDark: "#2F443A" },
-	{ id: "blue", label: "Blue", fg: "#347EA9", bg: "#E7F3F8", fgDark: "#66AADA", bgDark: "#2D4156" },
-	{ id: "purple", label: "Purple", fg: "#9165B0", bg: "#F4F0F7", fgDark: "#B098D8", bgDark: "#453A5B" },
-	{ id: "pink", label: "Pink", fg: "#C14C8A", bg: "#F9EEF3", fgDark: "#DE84D1", bgDark: "#51384D" },
-	{ id: "red", label: "Red", fg: "#D34C47", bg: "#FDEBEC", fgDark: "#EA878C", bgDark: "#5E3436" },
+	{ id: "gray", label: "Gray", fg: "#888784", bg: "#F1F1EF", fgDark: "#8F8F8F", bgDark: "#2F2F2F" },
+	{ id: "brown", label: "Brown", fg: "#976D57", bg: "#F3EEEE", fgDark: "#B28773", bgDark: "#46332A" },
+	{ id: "orange", label: "Orange", fg: "#D1873F", bg: "#F8ECDF", fgDark: "#AD774D", bgDark: "#573C27" },
+	{ id: "yellow", label: "Yellow", fg: "#C29343", bg: "#FAF3DE", fgDark: "#C29A56", bgDark: "#53442C" },
+	{ id: "green", label: "Green", fg: "#679176", bg: "#EEF3EC", fgDark: "#5C8C6B", bgDark: "#2A3C31" },
+	{ id: "blue", label: "Blue", fg: "#487CA5", bg: "#E9F3F7", fgDark: "#6786C4", bgDark: "#1E394C" },
+	{ id: "purple", label: "Purple", fg: "#8A67AB", bg: "#F6F3F9", fgDark: "#956ACD", bgDark: "#3A2E47" },
+	{ id: "pink", label: "Pink", fg: "#B75D8F", bg: "#F8F1F5", fgDark: "#B85A8C", bgDark: "#492E3B" },
+	{ id: "red", label: "Red", fg: "#C4554D", bg: "#FAECEC", fgDark: "#CF5D57", bgDark: "#4D302B" },
 ];
 
 export type ColorKind = "text" | "background";

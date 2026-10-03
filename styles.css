@@ -306,46 +306,46 @@
    only ever reads the values below. Keep in sync with NOTION_COLORS in
    colors.ts if either changes. */
 :root {
-	--nst-fg-gray: #787774;
-	--nst-fg-brown: #9E6B53;
-	--nst-fg-orange: #C86F21;
-	--nst-fg-yellow: #B57E33;
-	--nst-fg-green: #458262;
-	--nst-fg-blue: #347EA9;
-	--nst-fg-purple: #9165B0;
-	--nst-fg-pink: #C14C8A;
-	--nst-fg-red: #D34C47;
+	--nst-fg-gray: #888784;
+	--nst-fg-brown: #976D57;
+	--nst-fg-orange: #D1873F;
+	--nst-fg-yellow: #C29343;
+	--nst-fg-green: #679176;
+	--nst-fg-blue: #487CA5;
+	--nst-fg-purple: #8A67AB;
+	--nst-fg-pink: #B75D8F;
+	--nst-fg-red: #C4554D;
 
 	--nst-hl-gray: #F1F1EF;
-	--nst-hl-brown: #F4EEEE;
-	--nst-hl-orange: #FBEDE7;
-	--nst-hl-yellow: #F4F1E5;
-	--nst-hl-green: #EDF3EB;
-	--nst-hl-blue: #E7F3F8;
-	--nst-hl-purple: #F4F0F7;
-	--nst-hl-pink: #F9EEF3;
-	--nst-hl-red: #FDEBEC;
+	--nst-hl-brown: #F3EEEE;
+	--nst-hl-orange: #F8ECDF;
+	--nst-hl-yellow: #FAF3DE;
+	--nst-hl-green: #EEF3EC;
+	--nst-hl-blue: #E9F3F7;
+	--nst-hl-purple: #F6F3F9;
+	--nst-hl-pink: #F8F1F5;
+	--nst-hl-red: #FAECEC;
 }
 body.theme-dark {
-	--nst-fg-gray: #9FA4A8;
-	--nst-fg-brown: #D49675;
-	--nst-fg-orange: #E98D36;
-	--nst-fg-yellow: #C99D46;
-	--nst-fg-green: #72B183;
-	--nst-fg-blue: #66AADA;
-	--nst-fg-purple: #B098D8;
-	--nst-fg-pink: #DE84D1;
-	--nst-fg-red: #EA878C;
+	--nst-fg-gray: #8F8F8F;
+	--nst-fg-brown: #B28773;
+	--nst-fg-orange: #AD774D;
+	--nst-fg-yellow: #C29A56;
+	--nst-fg-green: #5C8C6B;
+	--nst-fg-blue: #6786C4;
+	--nst-fg-purple: #956ACD;
+	--nst-fg-pink: #B85A8C;
+	--nst-fg-red: #CF5D57;
 
-	--nst-hl-gray: #3C4144;
-	--nst-hl-brown: #4C3E35;
-	--nst-hl-orange: #553B29;
-	--nst-hl-yellow: #4A3E2C;
-	--nst-hl-green: #2F443A;
-	--nst-hl-blue: #2D4156;
-	--nst-hl-purple: #453A5B;
-	--nst-hl-pink: #51384D;
-	--nst-hl-red: #5E3436;
+	--nst-hl-gray: #2F2F2F;
+	--nst-hl-brown: #46332A;
+	--nst-hl-orange: #573C27;
+	--nst-hl-yellow: #53442C;
+	--nst-hl-green: #2A3C31;
+	--nst-hl-blue: #1E394C;
+	--nst-hl-purple: #3A2E47;
+	--nst-hl-pink: #492E3B;
+	--nst-hl-red: #4D302B;
 }
 
 .nst-fg-gray { color: var(--nst-fg-gray); }
