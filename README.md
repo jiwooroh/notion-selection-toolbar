@@ -2,6 +2,8 @@
 
 A Notion-style floating toolbar for [Obsidian](https://obsidian.md). Select some text and a toolbar pops up above it. From there you can change the block type, color the text or highlight it, and apply inline formatting without typing any Markdown.
 
+If you like it, [![BuyMeACoffee](https://raw.githubusercontent.com/pachadotdev/buymeacoffee-badges/main/bmc-yellow.svg)](https://buymeacoffee.com/jiwooroh)
+
 ![Demo](images/demo.gif)
 
 ## How to use
