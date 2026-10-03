@@ -15,7 +15,12 @@ export interface NotionToolbarSettings {
 	customButtonCommandId: string | null;
 	/** Lucide icon name shown on the custom toolbar button. */
 	customButtonIcon: string;
+	/** What the Comment button does: "auto" uses the Notion-style Comments plugin
+	 *  when it's enabled and falls back to a native %% comment otherwise. */
+	commentMode: CommentMode;
 }
+
+export type CommentMode = "auto" | "plugin" | "native";
 
 const DEFAULT_SETTINGS: NotionToolbarSettings = {
 	recentColors: [],
@@ -23,6 +28,7 @@ const DEFAULT_SETTINGS: NotionToolbarSettings = {
 	highlightColorsDark: {},
 	customButtonCommandId: null,
 	customButtonIcon: "sparkles",
+	commentMode: "auto",
 };
 
 export default class NotionToolbarPlugin extends Plugin {

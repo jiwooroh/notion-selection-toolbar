@@ -82,7 +82,12 @@ Every button toggles: click it again on the same selection to remove the formatt
 ### Other buttons
 
 - **More (⋯)**: opens Obsidian's command palette.
-- **Comment**: turns the selection into a native Obsidian comment, `%%text%%`, by running Obsidian's built-in **Toggle comment** command (the same as `Cmd/Ctrl + /`). Click again to remove the comment. Comments are hidden in Reading view and exports, and work anywhere Obsidian handles `%%` comments.
+- **Comment**: adds a comment to the selection.
+  - If the [Notion-style Comments](https://github.com/jiwooroh/obsidian-document-comments) plugin is enabled, it opens that plugin's **Add comment**.
+  - Otherwise it makes a native Obsidian comment, `%%text%%`, using Obsidian's built-in **Toggle comment** (the same as `Cmd/Ctrl + /`). Click again to remove it.
+  - You can choose which one to always use under **Settings → Notion Selection Toolbar → Comment style**.
+
+  <img src="images/comment.png" alt="Comments added with the Notion-style Comments plugin" width="480">
 
 - **Custom button (✨)**: runs any command you assign to it in settings (see below).
 
@@ -93,6 +98,7 @@ Go to **Settings → Notion Selection Toolbar**:
 <img src="images/settings.png" alt="Settings" width="600">
 
 - **Light / Dark theme highlight colors**: change each background color separately for light and dark mode. Use the ↺ button to reset a color to its default. Highlights already in your notes update immediately.
+- **Comment style**: what the Comment button does. **Automatic** (default) uses Notion-style Comments when it's enabled and native `%%` comments otherwise. You can also pick one of the two to always use.
 - **Custom toolbar button**
   - **Command**: pick any command from the command palette for the button to run.
   - **Icon**: any [Lucide](https://lucide.dev/icons) icon name, e.g. `sparkles`, `star`, `zap`, `bookmark`.

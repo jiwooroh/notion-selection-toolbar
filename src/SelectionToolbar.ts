@@ -14,6 +14,8 @@ import type NotionToolbarPlugin from "./main";
 // Obsidian's built-in "Toggle comment" (Cmd/Ctrl+/), which wraps the selection in
 // %%…%% — the same native Markdown comment every other Obsidian feature understands.
 const TOGGLE_COMMENT_COMMAND_ID = "editor:toggle-comments";
+// "Add comment" from the Notion-style Comments plugin (github.com/jiwooroh/obsidian-document-comments).
+export const COMMENT_PLUGIN_COMMAND_ID = "notion-style-comments:add-comment";
 
 type Submenu = "none" | "blocktype" | "color" | "link" | "callout";
 
@@ -237,8 +239,23 @@ export class SelectionToolbar {
 	private addComment(): void {
 		const editor = this.currentEditor;
 		if (!editor) return;
+		const commands = this.getAppCommands();
+		const mode = this.plugin.settings.commentMode;
+		const pluginAvailable = !!commands?.commands?.[COMMENT_PLUGIN_COMMAND_ID];
+
+		if (mode === "plugin" || (mode === "auto" && pluginAvailable)) {
+			if (!pluginAvailable) {
+				new Notice("Install and enable the \"Notion-style Comments\" plugin, or switch the Comment button to native comments in settings.");
+				return;
+			}
+			editor.focus();
+			commands.executeCommandById(COMMENT_PLUGIN_COMMAND_ID);
+			this.hide();
+			return;
+		}
+
 		editor.focus();
-		const ran = this.getAppCommands()?.executeCommandById(TOGGLE_COMMENT_COMMAND_ID);
+		const ran = commands?.executeCommandById(TOGGLE_COMMENT_COMMAND_ID);
 		if (!ran) toggleInlineWrap(editor, "%%");
 		this.refreshAfterEdit();
 	}

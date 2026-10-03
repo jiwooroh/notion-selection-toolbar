@@ -1,6 +1,6 @@
 import { App, FuzzySuggestModal, PluginSettingTab, Setting, setIcon } from "obsidian";
 import { ColorDef, NOTION_COLORS } from "./colors";
-import type { NotionToolbarSettings } from "./main";
+import type { CommentMode, NotionToolbarSettings } from "./main";
 import type NotionToolbarPlugin from "./main";
 
 type HighlightMapKey = "highlightColorsLight" | "highlightColorsDark";
@@ -69,7 +69,28 @@ export class NotionToolbarSettingTab extends PluginSettingTab {
 			(c) => c.bgDark,
 		);
 
+		this.renderCommentSection(containerEl);
 		this.renderCustomButtonSection(containerEl);
+	}
+
+	private renderCommentSection(containerEl: HTMLElement): void {
+		new Setting(containerEl).setName("Comment button").setHeading();
+		new Setting(containerEl)
+			.setName("Comment style")
+			.setDesc(
+				"Automatic uses the Notion-style Comments plugin when it's enabled, and native Obsidian comments (%%text%%) otherwise.",
+			)
+			.addDropdown((dd) =>
+				dd
+					.addOption("auto", "Automatic")
+					.addOption("plugin", "Notion-style Comments plugin")
+					.addOption("native", "Native Obsidian comment (%%)")
+					.setValue(this.plugin.settings.commentMode)
+					.onChange(async (value) => {
+						this.plugin.settings.commentMode = value as CommentMode;
+						await this.plugin.saveSettings();
+					})
+			);
 	}
 
 	private renderCustomButtonSection(containerEl: HTMLElement): void {
