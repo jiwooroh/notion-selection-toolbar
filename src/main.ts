@@ -2,7 +2,12 @@ import { Editor, MarkdownView, Notice, Plugin } from "obsidian";
 import { SelectionToolbar } from "./SelectionToolbar";
 import { RecentColor, refreshHighlightColorVars } from "./colors";
 import { NotionToolbarSettingTab } from "./settings";
-import { applyColor, toggleInlineWrap } from "./textCommands";
+import { applyColor, selectColorTag, toggleInlineWrap } from "./textCommands";
+
+/** The part of an internal Obsidian command object patchBoldCommand() touches. */
+interface BoldCommand {
+	editorCallback?: (editor: Editor, ctx: unknown) => unknown;
+}
 
 export interface NotionToolbarSettings {
 	recentColors: RecentColor[];
@@ -41,6 +46,8 @@ export default class NotionToolbarPlugin extends Plugin {
 		this.toolbar = new SelectionToolbar(this.app, this);
 		this.addSettingTab(new NotionToolbarSettingTab(this.app, this));
 		this.refreshColorVars();
+
+		this.patchBoldCommand();
 
 		// No default hotkey — the user binds their own via Settings → Hotkeys.
 		// Same toggleInlineWrap the floating toolbar's own buttons call.
@@ -87,6 +94,26 @@ export default class NotionToolbarPlugin extends Plugin {
 		// the highlight-color CSS variables in sync so already-applied highlights
 		// re-render in the new theme's colors instead of staying frozen.
 		this.registerEvent(this.app.workspace.on("css-change", () => this.refreshColorVars()));
+	}
+
+	/** Makes Obsidian's own "Toggle bold" (Cmd/Ctrl+B, or whatever it's bound to)
+	 *  bold a color/highlight tag with <strong> inside the tag, like the toolbar's
+	 *  Bold button, instead of `**` — which Live Preview doesn't render there.
+	 *  Anywhere else the original command runs unchanged. The command looks up
+	 *  editorCallback when it runs, so swapping it is enough; restored on unload. */
+	private patchBoldCommand(): void {
+		const commands = (this.app as unknown as { commands?: { commands?: Record<string, BoldCommand> } })
+			.commands?.commands;
+		const bold = commands?.["editor:toggle-bold"];
+		const original = bold?.editorCallback;
+		if (!bold || !original) return;
+		bold.editorCallback = (editor, ctx) => {
+			if (selectColorTag(editor)) toggleInlineWrap(editor, "**");
+			else original.call(bold, editor, ctx);
+		};
+		this.register(() => {
+			bold.editorCallback = original;
+		});
 	}
 
 	/** Recomputes the `--nst-hl-*` custom properties for the active theme. Call

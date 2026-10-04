@@ -219,12 +219,39 @@ function htmlWrapFor(prefix: string, suffix: string): [string, string] {
 	return hit ? [hit[1], hit[2]] : [prefix, suffix];
 }
 
+// The opening/closing tag of a color or highlight, as written by applyColor().
+const OPEN_TAG_BEFORE_RE = /<(span|mark) (?:class|style)="[^"]*">$/;
+
+/** True if the selection is a color/highlight <span>/<mark> — either the whole
+ *  tag, or just the text inside it (e.g. selected in Source mode), in which case
+ *  the selection is widened to the whole tag so it can be edited as one. */
+export function selectColorTag(editor: Editor): boolean {
+	const selected = editor.getSelection();
+	if (!selected) return false;
+	if (HTML_WRAP_RE.test(selected)) return true;
+
+	const from = editor.getCursor("from");
+	const to = editor.getCursor("to");
+	if (from.line !== to.line) return false;
+	const line = editor.getLine(from.line);
+	const open = OPEN_TAG_BEFORE_RE.exec(line.slice(0, from.ch));
+	if (!open) return false;
+	const close = `</${open[1]}>`;
+	if (!line.startsWith(close, to.ch)) return false;
+	editor.setSelection(
+		{ line: from.line, ch: from.ch - open[0].length },
+		{ line: to.line, ch: to.ch + close.length }
+	);
+	return true;
+}
+
 /** Toggle-wraps the selection with prefix/suffix, undoing the wrap if it's already applied.
  *
- *  When the selection is exactly a color/highlight <span>/<mark>, the formatting goes
- *  INSIDE the tag as real HTML (`**` → `<strong>`, see MD_TO_HTML) instead of
- *  Markdown, which Live Preview doesn't render inside or around an HTML tag. */
+ *  When the selection is a color/highlight <span>/<mark> (see selectColorTag), the
+ *  formatting goes INSIDE the tag as real HTML (`**` → `<strong>`, see MD_TO_HTML)
+ *  instead of Markdown, which Live Preview doesn't render inside or around an HTML tag. */
 export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string = prefix): void {
+	selectColorTag(editor);
 	const fromPos = editor.getCursor("from");
 	const toPos = editor.getCursor("to");
 	const selected = editor.getSelection();
