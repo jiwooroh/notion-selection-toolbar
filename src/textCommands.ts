@@ -299,12 +299,29 @@ function toggleMixedWrap(text: string, prefix: string, suffix: string): string |
 		.join("");
 }
 
-/** True if the selection is, or contains, a color/highlight tag — formatting it
- *  then goes inside the tag(s) as HTML. Widens a selection of just a tag's
- *  inner text to the whole tag (see selectColorTag). */
+/** True if the selection is, contains, or sits inside a color/highlight tag —
+ *  formatting it then goes inside the tag(s) as HTML. Widens a selection of
+ *  exactly a tag's inner text to the whole tag (see selectColorTag). */
 export function selectionHasColorTag(editor: Editor): boolean {
 	if (selectColorTag(editor)) return true;
+	if (isInsideColorTag(editor)) return true;
 	return new RegExp(COLOR_TAG_RE.source).test(editor.getSelection());
+}
+
+/** True if the selection is part of the text inside one color/highlight tag,
+ *  e.g. `static states` in `<mark class="nst-hl-blue">they keep static states</mark>`. */
+function isInsideColorTag(editor: Editor): boolean {
+	const from = editor.getCursor("from");
+	const to = editor.getCursor("to");
+	if (from.line !== to.line || from.ch === to.ch) return false;
+	const line = editor.getLine(from.line);
+	for (const tag of line.matchAll(COLOR_TAG_RE)) {
+		const [, open = "", , , close = ""] = HTML_WRAP_RE.exec(tag[0]) ?? [];
+		const start = (tag.index ?? 0) + open.length;
+		const end = (tag.index ?? 0) + tag[0].length - close.length;
+		if (from.ch >= start && to.ch <= end) return true;
+	}
+	return false;
 }
 
 /** Toggle-wraps the selection with prefix/suffix, undoing the wrap if it's already applied.
@@ -343,6 +360,15 @@ export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string 
 		editor.setSelection(fromPos, editor.offsetToPos(fromOff + mixed.length));
 		editor.focus();
 		return;
+	}
+
+	// Part of the text inside a color tag: wrap just that part, but as HTML.
+	if (isInsideColorTag(editor)) {
+		const [htmlPrefix, htmlSuffix] = htmlWrapFor(prefix, suffix);
+		if (htmlPrefix !== prefix) {
+			toggleInlineWrap(editor, htmlPrefix, htmlSuffix);
+			return;
+		}
 	}
 
 	const fromOff = editor.posToOffset(fromPos);
