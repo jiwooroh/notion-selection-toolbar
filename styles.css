@@ -23,45 +23,53 @@
 	user-select: none;
 }
 
-.nst-toolbar button {
+/* Button rules are prefixed with `body` (and the base one with
+   :not(.clickable-icon)) so they outrank Obsidian's own button styles no matter
+   which stylesheet loads last. On iPad, `.is-tablet button:not(.clickable-icon)
+   { padding: 4px 20px }` (0,2,1) otherwise won, and 40px of padding inside a
+   28px icon button squeezed every icon's SVG down to nothing. The iPad app's
+   copy of that rule still outranked these in practice (buttons came out 40px
+   wide, 3 per row), so padding is additionally !important. */
+body .nst-toolbar button:not(.clickable-icon) {
 	all: unset;
 	box-sizing: border-box;
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
 	height: var(--nst-cell);
-	padding: 0 6px;
+	padding: 0 6px !important;
 	border-radius: var(--radius-s, 4px);
 	color: var(--text-normal);
 	cursor: pointer;
 	white-space: nowrap;
 }
 
-.nst-toolbar button:hover {
+body .nst-toolbar button:not(.clickable-icon):hover {
 	background: var(--background-modifier-hover);
 }
 
-.nst-toolbar button.nst-btn,
-.nst-toolbar button.nst-color-btn {
+body .nst-toolbar button.nst-btn,
+body .nst-toolbar button.nst-color-btn {
 	width: var(--nst-cell);
 	height: var(--nst-cell);
-	padding: 0;
+	padding: 0 !important;
 	justify-content: center;
 }
 
-.nst-toolbar .nst-block-btn {
+body .nst-toolbar button.nst-block-btn {
 	flex: 1 1 auto;
 	width: 100%;
-	padding: 0 8px;
+	padding: 0 8px !important;
 	justify-content: flex-start;
 }
 
-.nst-toolbar svg {
+body .nst-toolbar svg {
+	flex-shrink: 0;
 	width: 15px;
 	height: 15px;
 }
 
-.nst-toolbar .nst-chevron svg {
+body .nst-toolbar .nst-chevron svg {
 	width: 12px;
 	height: 12px;
 	opacity: 0.6;
@@ -81,9 +89,9 @@
 	font-family: var(--font-text, inherit);
 }
 
-.nst-toolbar .nst-comment-btn {
+body .nst-toolbar button.nst-comment-btn {
 	flex: 1 1 auto;
-	padding: 0 8px;
+	padding: 0 8px !important;
 	justify-content: flex-start;
 }
 
