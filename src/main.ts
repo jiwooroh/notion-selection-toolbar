@@ -4,8 +4,8 @@ import { RecentColor, refreshHighlightColorVars } from "./colors";
 import { NotionToolbarSettingTab } from "./settings";
 import { applyColor, selectionHasColorTag, toggleInlineWrap } from "./textCommands";
 
-/** The part of an internal Obsidian command object patchBoldCommand() touches. */
-interface BoldCommand {
+/** The part of an internal Obsidian command object patchFormattingCommand() touches. */
+interface EditorCommand {
 	editorCallback?: (editor: Editor, ctx: unknown) => unknown;
 }
 
@@ -47,7 +47,8 @@ export default class NotionToolbarPlugin extends Plugin {
 		this.addSettingTab(new NotionToolbarSettingTab(this.app, this));
 		this.refreshColorVars();
 
-		this.patchBoldCommand();
+		this.patchFormattingCommand("editor:toggle-bold", "**");
+		this.patchFormattingCommand("editor:toggle-italics", "*");
 
 		// No default hotkey — the user binds their own via Settings → Hotkeys.
 		// Same toggleInlineWrap the floating toolbar's own buttons call.
@@ -96,24 +97,24 @@ export default class NotionToolbarPlugin extends Plugin {
 		this.registerEvent(this.app.workspace.on("css-change", () => this.refreshColorVars()));
 	}
 
-	/** Makes Obsidian's own "Toggle bold" (Cmd/Ctrl+B, or whatever it's bound to)
-	 *  bold a color/highlight tag — or a selection containing some — with <strong>
-	 *  inside the tag(s), like the toolbar's Bold button, instead of `**`, which
-	 *  Live Preview doesn't render there.
-	 *  Anywhere else the original command runs unchanged. The command looks up
-	 *  editorCallback when it runs, so swapping it is enough; restored on unload. */
-	private patchBoldCommand(): void {
-		const commands = (this.app as unknown as { commands?: { commands?: Record<string, BoldCommand> } })
+	/** Makes Obsidian's own "Toggle bold" / "Toggle italics" (Cmd/Ctrl+B / I, or
+	 *  whatever they're bound to) format a color/highlight tag — or a selection
+	 *  containing or inside one — with <strong> / <em> inside the tag, like the
+	 *  toolbar's buttons, instead of `**` / `*`, which Live Preview doesn't render
+	 *  there. Anywhere else the original command runs unchanged. The command looks
+	 *  up editorCallback when it runs, so swapping it is enough; restored on unload. */
+	private patchFormattingCommand(id: string, marker: string): void {
+		const commands = (this.app as unknown as { commands?: { commands?: Record<string, EditorCommand> } })
 			.commands?.commands;
-		const bold = commands?.["editor:toggle-bold"];
-		const original = bold?.editorCallback;
-		if (!bold || !original) return;
-		bold.editorCallback = (editor, ctx) => {
-			if (selectionHasColorTag(editor)) toggleInlineWrap(editor, "**");
-			else original.call(bold, editor, ctx);
+		const command = commands?.[id];
+		const original = command?.editorCallback;
+		if (!command || !original) return;
+		command.editorCallback = (editor, ctx) => {
+			if (selectionHasColorTag(editor)) toggleInlineWrap(editor, marker);
+			else original.call(command, editor, ctx);
 		};
 		this.register(() => {
-			bold.editorCallback = original;
+			command.editorCallback = original;
 		});
 	}
 
