@@ -1,6 +1,6 @@
 {
 	"name": "notion-selection-toolbar",
-	"version": "1.0.8",
+	"version": "1.0.9",
 	"description": "A Notion-style floating selection toolbar for Obsidian.",
 	"main": "main.js",
 	"scripts": {
