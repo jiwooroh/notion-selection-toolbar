@@ -186,6 +186,18 @@ function toggleWrapText(text: string, prefix: string, suffix: string): string {
 // class-based markup or the older inline-style one).
 const HTML_WRAP_RE = /^(<(span|mark)\b[^>]*>)([\s\S]*)(<\/\2>)$/;
 
+// Every complete color/highlight tag in a piece of text.
+const COLOR_TAG_RE = /<(span|mark) (?:class|style)="[^"]*">[\s\S]*?<\/\1>/g;
+
+/** True if `text` is exactly one color/highlight tag. HTML_WRAP_RE alone also
+ *  matches `<span>a</span> and <span>b</span>`, which starts and ends with a tag
+ *  but is two of them. */
+function isSingleColorTag(text: string): boolean {
+	if (!HTML_WRAP_RE.test(text)) return false;
+	const first = new RegExp(COLOR_TAG_RE.source).exec(text);
+	return !first || (first.index === 0 && first[0].length === text.length);
+}
+
 /** Markdown inline markers and the HTML tag that replaces each one inside a
  *  color/highlight tag. Live Preview renders a raw inline HTML tag as a single
  *  HTML widget, so Markdown inside it (`<span>**x**</span>`) shows up literally
@@ -228,7 +240,7 @@ const OPEN_TAG_BEFORE_RE = /<(span|mark) (?:class|style)="[^"]*">$/;
 export function selectColorTag(editor: Editor): boolean {
 	const selected = editor.getSelection();
 	if (!selected) return false;
-	if (HTML_WRAP_RE.test(selected)) return true;
+	if (isSingleColorTag(selected)) return true;
 
 	const from = editor.getCursor("from");
 	const to = editor.getCursor("to");
@@ -245,11 +257,63 @@ export function selectColorTag(editor: Editor): boolean {
 	return true;
 }
 
+function isWrapped(text: string, prefix: string, suffix: string): boolean {
+	return text.length >= prefix.length + suffix.length && text.startsWith(prefix) && text.endsWith(suffix);
+}
+
+/** Toggle-wraps a selection that mixes color/highlight tags with plain text, e.g.
+ *  `<span class="nst-fg-red">a</span> and <span class="nst-fg-red">b</span>`:
+ *  each tag gets the HTML form inside it (`<strong>`), each run of plain text
+ *  the Markdown form around it (`**and**`, leaving surrounding spaces outside
+ *  so the markers stay valid). If every part is already wrapped, all of it is
+ *  unwrapped instead. Returns null when the text has no color tag. */
+function toggleMixedWrap(text: string, prefix: string, suffix: string): string | null {
+	const [htmlPrefix, htmlSuffix] = htmlWrapFor(prefix, suffix);
+	type Part = { lead: string; body: string; trail: string; pre: string; suf: string; wrap?: [string, string] };
+	const parts: Part[] = [];
+	const addPlain = (plain: string) => {
+		const m = /^(\s*)([\s\S]*?)(\s*)$/.exec(plain);
+		if (m) parts.push({ lead: m[1], body: m[2], trail: m[3], pre: prefix, suf: suffix });
+	};
+	let last = 0;
+	for (const tag of text.matchAll(COLOR_TAG_RE)) {
+		const at = tag.index ?? 0;
+		addPlain(text.slice(last, at));
+		const [, open, , inner, close] = HTML_WRAP_RE.exec(tag[0]) ?? [];
+		parts.push({ lead: "", body: markdownWrapsToHtml(inner ?? ""), trail: "", pre: htmlPrefix, suf: htmlSuffix, wrap: [open ?? "", close ?? ""] });
+		last = at + tag[0].length;
+	}
+	if (last === 0) return null;
+	addPlain(text.slice(last));
+
+	const filled = parts.filter((p) => p.body);
+	const unwrap = filled.every((p) => isWrapped(p.body, p.pre, p.suf));
+	return parts
+		.map((p) => {
+			let body = p.body;
+			if (body && unwrap) body = body.slice(p.pre.length, body.length - p.suf.length);
+			else if (body && !isWrapped(body, p.pre, p.suf)) body = p.pre + body + p.suf;
+			const [open, close] = p.wrap ?? ["", ""];
+			return p.lead + open + body + close + p.trail;
+		})
+		.join("");
+}
+
+/** True if the selection is, or contains, a color/highlight tag — formatting it
+ *  then goes inside the tag(s) as HTML. Widens a selection of just a tag's
+ *  inner text to the whole tag (see selectColorTag). */
+export function selectionHasColorTag(editor: Editor): boolean {
+	if (selectColorTag(editor)) return true;
+	return new RegExp(COLOR_TAG_RE.source).test(editor.getSelection());
+}
+
 /** Toggle-wraps the selection with prefix/suffix, undoing the wrap if it's already applied.
  *
  *  When the selection is a color/highlight <span>/<mark> (see selectColorTag), the
  *  formatting goes INSIDE the tag as real HTML (`**` → `<strong>`, see MD_TO_HTML)
- *  instead of Markdown, which Live Preview doesn't render inside or around an HTML tag. */
+ *  instead of Markdown, which Live Preview doesn't render inside or around an HTML
+ *  tag. A selection mixing tags with plain text is handled part by part (see
+ *  toggleMixedWrap). */
 export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string = prefix): void {
 	selectColorTag(editor);
 	const fromPos = editor.getCursor("from");
@@ -257,7 +321,7 @@ export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string 
 	const selected = editor.getSelection();
 	if (!selected) return;
 
-	const htmlWrap = HTML_WRAP_RE.exec(selected);
+	const htmlWrap = isSingleColorTag(selected) ? HTML_WRAP_RE.exec(selected) : null;
 	if (htmlWrap) {
 		const [, open, , inner, close] = htmlWrap;
 		const [htmlPrefix, htmlSuffix] = htmlWrapFor(prefix, suffix);
@@ -268,6 +332,15 @@ export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string 
 		editor.replaceRange(replacement, fromPos, toPos);
 		const fromOff = editor.posToOffset(fromPos);
 		editor.setSelection(fromPos, editor.offsetToPos(fromOff + replacement.length));
+		editor.focus();
+		return;
+	}
+
+	const mixed = toggleMixedWrap(selected, prefix, suffix);
+	if (mixed !== null) {
+		editor.replaceRange(mixed, fromPos, toPos);
+		const fromOff = editor.posToOffset(fromPos);
+		editor.setSelection(fromPos, editor.offsetToPos(fromOff + mixed.length));
 		editor.focus();
 		return;
 	}

@@ -2,7 +2,7 @@ import { Editor, MarkdownView, Notice, Plugin } from "obsidian";
 import { SelectionToolbar } from "./SelectionToolbar";
 import { RecentColor, refreshHighlightColorVars } from "./colors";
 import { NotionToolbarSettingTab } from "./settings";
-import { applyColor, selectColorTag, toggleInlineWrap } from "./textCommands";
+import { applyColor, selectionHasColorTag, toggleInlineWrap } from "./textCommands";
 
 /** The part of an internal Obsidian command object patchBoldCommand() touches. */
 interface BoldCommand {
@@ -97,8 +97,9 @@ export default class NotionToolbarPlugin extends Plugin {
 	}
 
 	/** Makes Obsidian's own "Toggle bold" (Cmd/Ctrl+B, or whatever it's bound to)
-	 *  bold a color/highlight tag with <strong> inside the tag, like the toolbar's
-	 *  Bold button, instead of `**` — which Live Preview doesn't render there.
+	 *  bold a color/highlight tag — or a selection containing some — with <strong>
+	 *  inside the tag(s), like the toolbar's Bold button, instead of `**`, which
+	 *  Live Preview doesn't render there.
 	 *  Anywhere else the original command runs unchanged. The command looks up
 	 *  editorCallback when it runs, so swapping it is enough; restored on unload. */
 	private patchBoldCommand(): void {
@@ -108,7 +109,7 @@ export default class NotionToolbarPlugin extends Plugin {
 		const original = bold?.editorCallback;
 		if (!bold || !original) return;
 		bold.editorCallback = (editor, ctx) => {
-			if (selectColorTag(editor)) toggleInlineWrap(editor, "**");
+			if (selectionHasColorTag(editor)) toggleInlineWrap(editor, "**");
 			else original.call(bold, editor, ctx);
 		};
 		this.register(() => {
