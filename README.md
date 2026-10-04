@@ -63,6 +63,24 @@ Press **Cmd/Ctrl + Shift + H** to apply your most recently used color to the sel
 
 Colors follow your theme: applied colors switch automatically between light and dark mode.
 
+Bold colored text uses a slightly deeper bold variant of its color. Bold, italic, strikethrough and code applied to colored or highlighted text are written inside the color tag as HTML (e.g. `<span class="nst-fg-red"><strong>text</strong></span>`) so they render in Live Preview as well as Reading view. Obsidian's own **Cmd/Ctrl + B** does the same when the selection is colored or highlighted text.
+
+The palette, based on Notion's colors:
+
+| Color | Text (light) | Bold text (light) | Background (light) | Text (dark) | Bold text (dark) | Background (dark) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Gray | `#888784` | `#787774` | `#F1F1EF` | `#8F8F8F` | `#9B9B9B` | `#2F2F2F` |
+| Brown | `#976D57` | `#976D57` | `#F3EEEE` | `#B28773` | `#B28773` | `#46332A` |
+| Orange | `#D1873F` | `#CC782F` | `#F8ECDF` | `#AD774D` | `#BD8052` | `#573C27` |
+| Yellow | `#C29343` | `#C29343` | `#FAF3DE` | `#C29A56` | `#C29A56` | `#53442C` |
+| Green | `#679176` | `#548164` | `#EEF3EC` | `#5C8C6B` | `#659C75` | `#2A3C31` |
+| Blue | `#487CA5` | `#487CA5` | `#E9F3F7` | `#6786C4` | `#6786C4` | `#1E394C` |
+| Purple | `#8A67AB` | `#8A67AB` | `#F6F3F9` | `#956ACD` | `#956ACD` | `#3A2E47` |
+| Pink | `#B75D8F` | `#B35488` | `#F8F1F5` | `#B85A8C` | `#C25F94` | `#492E3B` |
+| Red | `#C4554D` | `#C4554D` | `#FAECEC` | `#CF5D57` | `#CF5D57` | `#4D302B` |
+
+Highlight colors can be customized in settings (see below); text colors are fixed.
+
 > **Note:** Colors are saved as HTML (`<span class="nst-fg-red">`, `<mark class="nst-hl-yellow">`) and get their look from this plugin's CSS. If you disable the plugin, the text stays but the colors stop showing.
 
 ### Inline formatting
