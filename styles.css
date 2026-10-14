@@ -374,6 +374,71 @@ body.theme-dark {
 	--nst-hl-red: #4D302B;
 }
 
+/* "Apple" color scheme (Settings → Color scheme), toggled as a class on <body>
+   by applyColorScheme(). The light block outranks :root and, coming later,
+   body.theme-dark's Notion values; the dark block (0,2,1) outranks both.
+   Keep in sync with APPLE_COLORS in colors.ts. */
+body.nst-scheme-apple {
+	--nst-fg-gray: #9898A0;
+	--nst-fg-gray-bold: #9898A0;
+	--nst-fg-brown: #B38C65;
+	--nst-fg-brown-bold: #B38C65;
+	--nst-fg-orange: #F09343;
+	--nst-fg-orange-bold: #F09343;
+	--nst-fg-yellow: #F4C242;
+	--nst-fg-yellow-bold: #F4C242;
+	--nst-fg-green: #53C67D;
+	--nst-fg-green-bold: #53C67D;
+	--nst-fg-blue: #3B86F7;
+	--nst-fg-blue-bold: #3B86F7;
+	--nst-fg-purple: #BB3ED9;
+	--nst-fg-purple-bold: #BB3ED9;
+	--nst-fg-pink: #EB445A;
+	--nst-fg-pink-bold: #EB445A;
+	--nst-fg-red: #ED5D4A;
+	--nst-fg-red-bold: #ED5D4A;
+
+	--nst-hl-gray: #9898A026;
+	--nst-hl-brown: #B38C6526;
+	--nst-hl-orange: #F0934326;
+	--nst-hl-yellow: #F4C24233;
+	--nst-hl-green: #53C67D26;
+	--nst-hl-blue: #3B86F726;
+	--nst-hl-purple: #BB3ED926;
+	--nst-hl-pink: #EB445A26;
+	--nst-hl-red: #ED5D4A26;
+}
+body.nst-scheme-apple.theme-dark {
+	--nst-fg-gray: #A0A0A7;
+	--nst-fg-gray-bold: #A0A0A7;
+	--nst-fg-brown: #B8946F;
+	--nst-fg-brown-bold: #B8946F;
+	--nst-fg-orange: #F09748;
+	--nst-fg-orange-bold: #F09748;
+	--nst-fg-yellow: #F6CE55;
+	--nst-fg-yellow-bold: #F6CE55;
+	--nst-fg-green: #5EC986;
+	--nst-fg-green-bold: #5EC986;
+	--nst-fg-blue: #3F8FF7;
+	--nst-fg-blue-bold: #3F8FF7;
+	--nst-fg-purple: #CA43EA;
+	--nst-fg-purple-bold: #CA43EA;
+	--nst-fg-pink: #EB4B63;
+	--nst-fg-pink-bold: #EB4B63;
+	--nst-fg-red: #EE6958;
+	--nst-fg-red-bold: #EE6958;
+
+	--nst-hl-gray: #A0A0A726;
+	--nst-hl-brown: #B8946F26;
+	--nst-hl-orange: #F0974826;
+	--nst-hl-yellow: #F6CE5526;
+	--nst-hl-green: #5EC98626;
+	--nst-hl-blue: #3F8FF726;
+	--nst-hl-purple: #CA43EA26;
+	--nst-hl-pink: #EB4B6326;
+	--nst-hl-red: #EE695826;
+}
+
 .nst-fg-gray { color: var(--nst-fg-gray); }
 .nst-fg-brown { color: var(--nst-fg-brown); }
 .nst-fg-orange { color: var(--nst-fg-orange); }
@@ -424,8 +489,13 @@ body.theme-dark {
    `.markdown-rendered mark { background-color: var(--text-highlight-bg) }`
    (0,1,1) outranks a bare `.nst-hl-*` (0,1,0) — so in reading view and in
    PDF export (which renders through reading view) every highlight fell back
-   to the default yellow. (0,2,0) wins without resorting to !important. */
-mark[class^="nst-hl-"] {
+   to the default yellow. (0,2,0) wins without resorting to !important.
+   The view-scoped mark selectors do the same for `color: inherit`: themes
+   style `.markdown-rendered mark { color: … }` (0,1,1), which otherwise beat
+   it, so text colored around a highlight (<span fg><mark hl>) lost its color. */
+mark[class^="nst-hl-"],
+.markdown-rendered mark[class^="nst-hl-"],
+.markdown-source-view mark[class^="nst-hl-"] {
 	color: inherit;
 	font-weight: normal !important;
 	padding: 0 1px !important;

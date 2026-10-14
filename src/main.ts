@@ -1,6 +1,6 @@
 import { Editor, MarkdownView, Notice, Plugin } from "obsidian";
 import { SelectionToolbar } from "./SelectionToolbar";
-import { RecentColor, refreshHighlightColorVars } from "./colors";
+import { ColorScheme, RecentColor, applyColorScheme, refreshHighlightColorVars } from "./colors";
 import { NotionToolbarSettingTab } from "./settings";
 import { applyColor, selectionHasColorTag, toggleInlineWrap } from "./textCommands";
 
@@ -11,6 +11,8 @@ interface EditorCommand {
 
 export interface NotionToolbarSettings {
 	recentColors: RecentColor[];
+	/** Which palette the applied text/highlight colors use (see COLOR_SCHEMES). */
+	colorScheme: ColorScheme;
 	/** User-customized hex values for the highlight (background) colors, keyed by color id —
 	 *  kept separate per theme so a highlight can look different in light vs dark Obsidian. */
 	highlightColorsLight: Record<string, string>;
@@ -29,6 +31,7 @@ export type CommentMode = "auto" | "plugin" | "native";
 
 const DEFAULT_SETTINGS: NotionToolbarSettings = {
 	recentColors: [],
+	colorScheme: "notion",
 	highlightColorsLight: {},
 	highlightColorsDark: {},
 	customButtonCommandId: null,
@@ -118,10 +121,12 @@ export default class NotionToolbarPlugin extends Plugin {
 		});
 	}
 
-	/** Recomputes the `--nst-hl-*` custom properties for the active theme. Call
-	 *  after anything that could change which value they should hold: startup,
-	 *  a theme switch, or the user editing a highlight color in settings. */
+	/** Applies the color scheme and recomputes the `--nst-hl-*` custom properties
+	 *  for the active theme. Call after anything that could change which value
+	 *  they should hold: startup, a theme switch, the user switching scheme or
+	 *  editing a highlight color in settings. */
 	refreshColorVars(): void {
+		applyColorScheme(this.settings.colorScheme);
 		refreshHighlightColorVars(this.settings.highlightColorsLight, this.settings.highlightColorsDark);
 	}
 
@@ -133,6 +138,7 @@ export default class NotionToolbarPlugin extends Plugin {
 
 	onunload(): void {
 		window.clearTimeout(this.debounceTimer);
+		applyColorScheme("notion");
 		this.toolbar.destroy();
 	}
 

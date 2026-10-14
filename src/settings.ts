@@ -1,5 +1,5 @@
 import { App, FuzzySuggestModal, PluginSettingTab, Setting, setIcon } from "obsidian";
-import { ColorDef, NOTION_COLORS } from "./colors";
+import { COLOR_SCHEMES, ColorDef, ColorScheme, colorsFor } from "./colors";
 import type { CommentMode, NotionToolbarSettings } from "./main";
 import type NotionToolbarPlugin from "./main";
 
@@ -49,8 +49,23 @@ export class NotionToolbarSettingTab extends PluginSettingTab {
 		const { containerEl } = this;
 		containerEl.empty();
 
+		new Setting(containerEl)
+			.setName("Color scheme")
+			.setDesc(
+				"The palette for text and highlight colors. Switching recolors colors already in your notes; the notes themselves don't change.",
+			)
+			.addDropdown((dd) => {
+				for (const scheme of COLOR_SCHEMES) dd.addOption(scheme.id, scheme.label);
+				dd.setValue(this.plugin.settings.colorScheme).onChange(async (value) => {
+					this.plugin.settings.colorScheme = value as ColorScheme;
+					await this.plugin.saveSettings();
+					this.plugin.refreshColorVars();
+					this.display();
+				});
+			});
+
 		containerEl.createEl("p", {
-			text: "Text colors stay fixed to Notion's defaults, which already differ between light and dark theme. Highlight (background) colors are customizable, separately for each theme, below.",
+			text: "Text colors come from the color scheme and differ between light and dark theme. Highlight (background) colors can be customized, separately for each theme, below; a customized color overrides the scheme's.",
 			cls: "setting-item-description",
 		});
 
@@ -162,10 +177,12 @@ export class NotionToolbarSettingTab extends PluginSettingTab {
 	): void {
 		new Setting(containerEl).setName(title).setDesc(desc).setHeading();
 
-		for (const c of NOTION_COLORS) {
+		for (const c of colorsFor(this.plugin.settings.colorScheme)) {
 			const themeDefault = defaultFor(c);
 			const map = this.plugin.settings[key];
-			const current = map[c.id] ?? themeDefault;
+			// The color picker takes #RRGGBB only; Apple's backgrounds carry an alpha
+			// channel (#RRGGBBAA), so the picker shows their opaque base color.
+			const current = (map[c.id] ?? themeDefault).slice(0, 7);
 			new Setting(containerEl)
 				.setName(c.label)
 				.addColorPicker((picker) =>

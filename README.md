@@ -63,9 +63,11 @@ Press **Cmd/Ctrl + Shift + H** to apply your most recently used color to the sel
 
 Colors follow your theme: applied colors switch automatically between light and dark mode.
 
-Bold colored text uses a slightly deeper bold variant of its color. Bold, italic, strikethrough and code applied to colored or highlighted text are written inside the color tag as HTML (e.g. `<span class="nst-fg-red"><strong>text</strong></span>`) so they render in Live Preview as well as Reading view. Obsidian's own **Cmd/Ctrl + B** does the same when the selection is colored or highlighted text.
+In the Notion scheme, bold colored text uses a slightly deeper bold variant of its color. Bold, italic, strikethrough and code applied to colored or highlighted text are written inside the color tag as HTML (e.g. `<span class="nst-fg-red"><strong>text</strong></span>`) so they render in Live Preview as well as Reading view. Obsidian's own **Cmd/Ctrl + B** and **Cmd/Ctrl + I** do the same when the selection is colored or highlighted text.
 
-The palette, based on Notion's colors:
+There are two color schemes, chosen under **Settings → Color scheme**. Switching recolors colors already in your notes; the notes themselves don't change.
+
+**Notion** (default):
 
 | Color | Text (light) | Bold text (light) | Background (light) | Text (dark) | Bold text (dark) | Background (dark) |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -79,7 +81,21 @@ The palette, based on Notion's colors:
 | Pink | `#B75D8F` | `#B35488` | `#F8F1F5` | `#B85A8C` | `#C25F94` | `#492E3B` |
 | Red | `#C4554D` | `#C4554D` | `#FAECEC` | `#CF5D57` | `#CF5D57` | `#4D302B` |
 
-Highlight colors can be customized in settings (see below); text colors are fixed.
+**Apple** (backgrounds are a translucent tint of the text color, and bold text uses the same color):
+
+| Color | Text (light) | Background (light) | Text (dark) | Background (dark) |
+| --- | --- | --- | --- | --- |
+| Gray | `#9898A0` | `#9898A026` | `#A0A0A7` | `#A0A0A726` |
+| Brown | `#B38C65` | `#B38C6526` | `#B8946F` | `#B8946F26` |
+| Orange | `#F09343` | `#F0934326` | `#F09748` | `#F0974826` |
+| Yellow | `#F4C242` | `#F4C24233` | `#F6CE55` | `#F6CE5526` |
+| Green | `#53C67D` | `#53C67D26` | `#5EC986` | `#5EC98626` |
+| Blue | `#3B86F7` | `#3B86F726` | `#3F8FF7` | `#3F8FF726` |
+| Purple | `#BB3ED9` | `#BB3ED926` | `#CA43EA` | `#CA43EA26` |
+| Pink | `#EB445A` | `#EB445A26` | `#EB4B63` | `#EB4B6326` |
+| Red | `#ED5D4A` | `#ED5D4A26` | `#EE6958` | `#EE695826` |
+
+Highlight colors can be customized in settings (see below) and override the scheme's; text colors are fixed.
 
 > **Note:** Colors are saved as HTML (`<span class="nst-fg-red">`, `<mark class="nst-hl-yellow">`) and get their look from this plugin's CSS. If you disable the plugin, the text stays but the colors stop showing.
 
@@ -115,6 +131,7 @@ Go to **Settings → Notion Selection Toolbar**:
 
 <img src="images/settings.png" alt="Settings" width="600">
 
+- **Color scheme**: **Notion** or **Apple** palette for text and highlight colors (see [Colors](#colors)).
 - **Light / Dark theme highlight colors**: change each background color separately for light and dark mode. Use the ↺ button to reset a color to its default. Highlights already in your notes update immediately.
 - **Comment style**: what the Comment button does. **Automatic** (default) uses Notion-style Comments when it's enabled and native `%%` comments otherwise. You can also pick one of the two to always use.
 - **Custom toolbar button**

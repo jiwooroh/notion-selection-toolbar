@@ -12,10 +12,11 @@ export interface ColorDef {
 	fgBoldDark: string;
 }
 
-/** Notion's text (normal and bold variants) and background color palettes
- *  (9 colors + default), for both light and dark mode. These are also
- *  the source of truth for the static `--nst-fg-*`/`--nst-hl-*` defaults
- *  hand-written into styles.css — keep the two in sync if either changes. */
+/** The "Notion" scheme: Notion's text (normal and bold variants) and background
+ *  color palettes (9 colors + default), for both light and dark mode. These are
+ *  also the source of truth for the static `--nst-fg-*`/`--nst-hl-*` defaults
+ *  hand-written into styles.css — keep the two in sync if either changes.
+ *  Every scheme uses the same ids/labels in the same order. */
 export const NOTION_COLORS: ColorDef[] = [
 	{ id: "gray", label: "Gray", fg: "#888784", bg: "#F1F1EF", fgDark: "#8F8F8F", bgDark: "#2F2F2F", fgBold: "#787774", fgBoldDark: "#9B9B9B" },
 	{ id: "brown", label: "Brown", fg: "#976D57", bg: "#F3EEEE", fgDark: "#B28773", bgDark: "#46332A", fgBold: "#976D57", fgBoldDark: "#B28773" },
@@ -27,6 +28,42 @@ export const NOTION_COLORS: ColorDef[] = [
 	{ id: "pink", label: "Pink", fg: "#B75D8F", bg: "#F8F1F5", fgDark: "#B85A8C", bgDark: "#492E3B", fgBold: "#B35488", fgBoldDark: "#C25F94" },
 	{ id: "red", label: "Red", fg: "#C4554D", bg: "#FAECEC", fgDark: "#CF5D57", bgDark: "#4D302B", fgBold: "#C4554D", fgBoldDark: "#CF5D57" },
 ];
+
+/** Apple-style colors: text in the color itself, backgrounds as a translucent
+ *  tint of it (15% alpha; light-mode yellow 20%). No
+ *  separate bold variant — bold text uses the same color. Mirrored by the
+ *  `body.nst-scheme-apple` block in styles.css — keep the two in sync. */
+export const APPLE_COLORS: ColorDef[] = [
+	{ id: "gray", label: "Gray", fg: "#9898A0", bg: "#9898A026", fgDark: "#A0A0A7", bgDark: "#A0A0A726", fgBold: "#9898A0", fgBoldDark: "#A0A0A7" },
+	{ id: "brown", label: "Brown", fg: "#B38C65", bg: "#B38C6526", fgDark: "#B8946F", bgDark: "#B8946F26", fgBold: "#B38C65", fgBoldDark: "#B8946F" },
+	{ id: "orange", label: "Orange", fg: "#F09343", bg: "#F0934326", fgDark: "#F09748", bgDark: "#F0974826", fgBold: "#F09343", fgBoldDark: "#F09748" },
+	{ id: "yellow", label: "Yellow", fg: "#F4C242", bg: "#F4C24233", fgDark: "#F6CE55", bgDark: "#F6CE5526", fgBold: "#F4C242", fgBoldDark: "#F6CE55" },
+	{ id: "green", label: "Green", fg: "#53C67D", bg: "#53C67D26", fgDark: "#5EC986", bgDark: "#5EC98626", fgBold: "#53C67D", fgBoldDark: "#5EC986" },
+	{ id: "blue", label: "Blue", fg: "#3B86F7", bg: "#3B86F726", fgDark: "#3F8FF7", bgDark: "#3F8FF726", fgBold: "#3B86F7", fgBoldDark: "#3F8FF7" },
+	{ id: "purple", label: "Purple", fg: "#BB3ED9", bg: "#BB3ED926", fgDark: "#CA43EA", bgDark: "#CA43EA26", fgBold: "#BB3ED9", fgBoldDark: "#CA43EA" },
+	{ id: "pink", label: "Pink", fg: "#EB445A", bg: "#EB445A26", fgDark: "#EB4B63", bgDark: "#EB4B6326", fgBold: "#EB445A", fgBoldDark: "#EB4B63" },
+	{ id: "red", label: "Red", fg: "#ED5D4A", bg: "#ED5D4A26", fgDark: "#EE6958", bgDark: "#EE695826", fgBold: "#ED5D4A", fgBoldDark: "#EE6958" },
+];
+
+export type ColorScheme = "notion" | "apple";
+
+export const COLOR_SCHEMES: { id: ColorScheme; label: string; colors: ColorDef[] }[] = [
+	{ id: "notion", label: "Notion", colors: NOTION_COLORS },
+	{ id: "apple", label: "Apple", colors: APPLE_COLORS },
+];
+
+/** The colors of a scheme (Notion if the id is unknown, e.g. from a newer version). */
+export function colorsFor(scheme: ColorScheme): ColorDef[] {
+	return (COLOR_SCHEMES.find((s) => s.id === scheme) ?? COLOR_SCHEMES[0]).colors;
+}
+
+/** Applied colors are class names (`nst-fg-red`) whose values come from CSS
+ *  variables, so a scheme is just a `nst-scheme-<id>` class on <body> that
+ *  swaps those values — switching recolors every note without touching it.
+ *  Notion is the stylesheet's default and needs no class. */
+export function applyColorScheme(scheme: ColorScheme): void {
+	for (const s of COLOR_SCHEMES) document.body.toggleClass(`nst-scheme-${s.id}`, s.id === scheme && s.id !== "notion");
+}
 
 export type ColorKind = "text" | "background";
 
