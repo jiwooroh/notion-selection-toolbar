@@ -176,10 +176,18 @@ export function makeColumns(editor: Editor, columns = 2): void {
  *  the inner-text half of toggleInlineWrap's logic, reused for content trapped
  *  inside an HTML tag below. */
 function toggleWrapText(text: string, prefix: string, suffix: string): string {
-	if (text.length >= prefix.length + suffix.length && text.startsWith(prefix) && text.endsWith(suffix)) {
-		return text.slice(prefix.length, text.length - suffix.length);
-	}
+	if (isWrapped(text, prefix, suffix)) return text.slice(prefix.length, text.length - suffix.length);
 	return prefix + text + suffix;
+}
+
+/** True if prefix/suffix wrap the whole of `text` — for an HTML pair, as one
+ *  element: `<strong>a</strong> b <strong>c</strong>` starts and ends with the
+ *  tags but is two separate ones. */
+function isWrapped(text: string, prefix: string, suffix: string): boolean {
+	if (text.length < prefix.length + suffix.length || !text.startsWith(prefix) || !text.endsWith(suffix)) {
+		return false;
+	}
+	return !prefix.startsWith("<") || !text.slice(prefix.length, text.length - suffix.length).includes(suffix);
 }
 
 // A selection that's exactly one <span>/<mark> from applyColor() (current
@@ -224,6 +232,51 @@ function markdownWrapsToHtml(text: string): string {
 	return text;
 }
 
+/** Rewrites inline Markdown anywhere in `text` (not just wrapping all of it) as
+ *  HTML, for content inside a color/highlight tag: `**Aim**: …` → `<strong>Aim</strong>: …`.
+ *  Single `_` / `__` are left alone so identifiers like snake_case survive. */
+function inlineMarkdownToHtml(text: string): string {
+	return text
+		.replace(/`([^`]+)`/g, "<code>$1</code>")
+		.replace(/\*\*\*(?=\S)([^*]+?)\*\*\*/g, "<strong><em>$1</em></strong>")
+		.replace(/\*\*(?=\S)([^*]+?)\*\*/g, "<strong>$1</strong>")
+		.replace(/~~(?=\S)([^~]+?)~~/g, "<s>$1</s>")
+		.replace(/\*(?=[^\s*])([^*]+?)\*/g, "<em>$1</em>");
+}
+
+// Private-use characters marking the selection while a line is rewritten.
+const SEL_FROM = "\uE000";
+const SEL_TO = "\uE001";
+
+/** Converts Markdown inside every color/highlight tag on the selection's line to
+ *  HTML (see inlineMarkdownToHtml), keeping the selection on the same text.
+ *  Live Preview shows Markdown inside an HTML tag literally, and formatting on
+ *  top of it (`**<strong>Aim</strong>**`) only gets worse, so this runs before
+ *  any formatting is applied. */
+function normalizeColorTagsOnLine(editor: Editor): void {
+	const from = editor.getCursor("from");
+	const to = editor.getCursor("to");
+	if (from.line !== to.line) return;
+	const line = editor.getLine(from.line);
+	if (!new RegExp(COLOR_TAG_RE.source).test(line)) return;
+
+	const marked = line.slice(0, from.ch) + SEL_FROM + line.slice(from.ch, to.ch) + SEL_TO + line.slice(to.ch);
+	const converted = marked.replace(COLOR_TAG_RE, (tag) => {
+		const [, open = "", , inner = "", close = ""] = HTML_WRAP_RE.exec(tag) ?? [];
+		return open + inlineMarkdownToHtml(inner) + close;
+	});
+	if (converted === marked) return;
+
+	const newFrom = converted.indexOf(SEL_FROM);
+	const newTo = converted.indexOf(SEL_TO) - 1;
+	editor.replaceRange(
+		converted.replace(SEL_FROM, "").replace(SEL_TO, ""),
+		{ line: from.line, ch: 0 },
+		{ line: from.line, ch: line.length }
+	);
+	editor.setSelection({ line: from.line, ch: newFrom }, { line: from.line, ch: newTo });
+}
+
 /** HTML equivalent of a Markdown prefix/suffix pair, or the pair unchanged if
  *  it's already HTML (e.g. `<u>`). */
 function htmlWrapFor(prefix: string, suffix: string): [string, string] {
@@ -255,10 +308,6 @@ export function selectColorTag(editor: Editor): boolean {
 		{ line: to.line, ch: to.ch + close.length }
 	);
 	return true;
-}
-
-function isWrapped(text: string, prefix: string, suffix: string): boolean {
-	return text.length >= prefix.length + suffix.length && text.startsWith(prefix) && text.endsWith(suffix);
 }
 
 /** Toggle-wraps a selection that mixes color/highlight tags with plain text, e.g.
@@ -332,6 +381,7 @@ function isInsideColorTag(editor: Editor): boolean {
  *  tag. A selection mixing tags with plain text is handled part by part (see
  *  toggleMixedWrap). */
 export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string = prefix): void {
+	normalizeColorTagsOnLine(editor);
 	selectColorTag(editor);
 	const fromPos = editor.getCursor("from");
 	const toPos = editor.getCursor("to");
@@ -345,7 +395,12 @@ export function toggleInlineWrap(editor: Editor, prefix: string, suffix: string 
 		// Normalize any Markdown already inside (from older versions) to HTML first,
 		// so toggling bold off a `<span>**x**</span>` still works.
 		const body = markdownWrapsToHtml(inner ?? "");
-		const replacement = `${open}${toggleWrapText(body, htmlPrefix, htmlSuffix)}${close}`;
+		// Wrapping all of it makes any same formatting already inside redundant
+		// (`<strong><strong>Aim</strong>: …</strong>`), so drop that first.
+		const flat = isWrapped(body, htmlPrefix, htmlSuffix)
+			? body
+			: body.split(htmlPrefix).join("").split(htmlSuffix).join("");
+		const replacement = `${open}${toggleWrapText(flat, htmlPrefix, htmlSuffix)}${close}`;
 		editor.replaceRange(replacement, fromPos, toPos);
 		const fromOff = editor.posToOffset(fromPos);
 		editor.setSelection(fromPos, editor.offsetToPos(fromOff + replacement.length));
@@ -462,7 +517,7 @@ export function applyColor(editor: Editor, kind: ColorKind, colorId: string): vo
 		if (!def) return;
 		// Bold/italic/etc. already on the selection must become HTML once it's
 		// inside the color tag, or Live Preview shows the raw `**`.
-		const body = markdownWrapsToHtml(inner);
+		const body = markdownWrapsToHtml(inlineMarkdownToHtml(inner));
 		replacement =
 			kind === "text"
 				? `<span class="nst-fg-${def.id}">${body}</span>`
