@@ -67,6 +67,8 @@ In the Notion scheme, bold colored text uses a slightly deeper bold variant of i
 
 There are two color schemes, chosen under **Settings → Color scheme**. Switching recolors colors already in your notes; the notes themselves don't change.
 
+<img src="images/color-schemes.png" alt="Notion and Apple color schemes in light and dark mode">
+
 **Notion** (default):
 
 | Color | Text (light) | Bold text (light) | Background (light) | Text (dark) | Bold text (dark) | Background (dark) |
