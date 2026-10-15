@@ -387,26 +387,26 @@ body.nst-scheme-apple {
 	--nst-fg-orange-bold: #F09343;
 	--nst-fg-yellow: #F4C242;
 	--nst-fg-yellow-bold: #F4C242;
-	--nst-fg-green: #53C67D;
-	--nst-fg-green-bold: #53C67D;
-	--nst-fg-blue: #3B86F7;
-	--nst-fg-blue-bold: #3B86F7;
+	--nst-fg-green: #30CF6A;
+	--nst-fg-green-bold: #30CF6A;
+	--nst-fg-blue: #3869F0;
+	--nst-fg-blue-bold: #3869F0;
 	--nst-fg-purple: #BB3ED9;
 	--nst-fg-purple-bold: #BB3ED9;
-	--nst-fg-pink: #EB445A;
-	--nst-fg-pink-bold: #EB445A;
-	--nst-fg-red: #ED5D4A;
-	--nst-fg-red-bold: #ED5D4A;
+	--nst-fg-pink: #ED358E;
+	--nst-fg-pink-bold: #ED358E;
+	--nst-fg-red: #DE2E21;
+	--nst-fg-red-bold: #DE2E21;
 
 	--nst-hl-gray: #9898A026;
 	--nst-hl-brown: #B38C6526;
 	--nst-hl-orange: #F0934326;
 	--nst-hl-yellow: #F4C24233;
-	--nst-hl-green: #53C67D26;
-	--nst-hl-blue: #3B86F726;
+	--nst-hl-green: #30CF6A26;
+	--nst-hl-blue: #3869F026;
 	--nst-hl-purple: #BB3ED926;
-	--nst-hl-pink: #EB445A26;
-	--nst-hl-red: #ED5D4A26;
+	--nst-hl-pink: #ED358E26;
+	--nst-hl-red: #DE2E2126;
 }
 body.nst-scheme-apple.theme-dark {
 	--nst-fg-gray: #A0A0A7;
@@ -417,26 +417,26 @@ body.nst-scheme-apple.theme-dark {
 	--nst-fg-orange-bold: #F09748;
 	--nst-fg-yellow: #F6CE55;
 	--nst-fg-yellow-bold: #F6CE55;
-	--nst-fg-green: #5EC986;
-	--nst-fg-green-bold: #5EC986;
-	--nst-fg-blue: #3F8FF7;
-	--nst-fg-blue-bold: #3F8FF7;
+	--nst-fg-green: #51DB84;
+	--nst-fg-green-bold: #51DB84;
+	--nst-fg-blue: #598BF8;
+	--nst-fg-blue-bold: #598BF8;
 	--nst-fg-purple: #CA43EA;
 	--nst-fg-purple-bold: #CA43EA;
-	--nst-fg-pink: #EB4B63;
-	--nst-fg-pink-bold: #EB4B63;
-	--nst-fg-red: #EE6958;
-	--nst-fg-red-bold: #EE6958;
+	--nst-fg-pink: #F75FA8;
+	--nst-fg-pink-bold: #F75FA8;
+	--nst-fg-red: #EC5F55;
+	--nst-fg-red-bold: #EC5F55;
 
 	--nst-hl-gray: #A0A0A726;
 	--nst-hl-brown: #B8946F26;
 	--nst-hl-orange: #F0974826;
 	--nst-hl-yellow: #F6CE5526;
-	--nst-hl-green: #5EC98626;
-	--nst-hl-blue: #3F8FF726;
+	--nst-hl-green: #51DB8426;
+	--nst-hl-blue: #598BF826;
 	--nst-hl-purple: #CA43EA26;
-	--nst-hl-pink: #EB4B6326;
-	--nst-hl-red: #EE695826;
+	--nst-hl-pink: #F75FA826;
+	--nst-hl-red: #EC5F5526;
 }
 
 .nst-fg-gray { color: var(--nst-fg-gray); }

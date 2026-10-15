@@ -89,11 +89,11 @@ There are two color schemes, chosen under **Settings → Color scheme**. Switchi
 | Brown | `#B38C65` | `#B38C6526` | `#B8946F` | `#B8946F26` |
 | Orange | `#F09343` | `#F0934326` | `#F09748` | `#F0974826` |
 | Yellow | `#F4C242` | `#F4C24233` | `#F6CE55` | `#F6CE5526` |
-| Green | `#53C67D` | `#53C67D26` | `#5EC986` | `#5EC98626` |
-| Blue | `#3B86F7` | `#3B86F726` | `#3F8FF7` | `#3F8FF726` |
+| Green | `#30CF6A` | `#30CF6A26` | `#51DB84` | `#51DB8426` |
+| Blue | `#3869F0` | `#3869F026` | `#598BF8` | `#598BF826` |
 | Purple | `#BB3ED9` | `#BB3ED926` | `#CA43EA` | `#CA43EA26` |
-| Pink | `#EB445A` | `#EB445A26` | `#EB4B63` | `#EB4B6326` |
-| Red | `#ED5D4A` | `#ED5D4A26` | `#EE6958` | `#EE695826` |
+| Pink | `#ED358E` | `#ED358E26` | `#F75FA8` | `#F75FA826` |
+| Red | `#DE2E21` | `#DE2E2126` | `#EC5F55` | `#EC5F5526` |
 
 Highlight colors can be customized in settings (see below) and override the scheme's; text colors are fixed.
 

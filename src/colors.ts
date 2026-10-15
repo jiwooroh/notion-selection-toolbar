@@ -38,11 +38,11 @@ export const APPLE_COLORS: ColorDef[] = [
 	{ id: "brown", label: "Brown", fg: "#B38C65", bg: "#B38C6526", fgDark: "#B8946F", bgDark: "#B8946F26", fgBold: "#B38C65", fgBoldDark: "#B8946F" },
 	{ id: "orange", label: "Orange", fg: "#F09343", bg: "#F0934326", fgDark: "#F09748", bgDark: "#F0974826", fgBold: "#F09343", fgBoldDark: "#F09748" },
 	{ id: "yellow", label: "Yellow", fg: "#F4C242", bg: "#F4C24233", fgDark: "#F6CE55", bgDark: "#F6CE5526", fgBold: "#F4C242", fgBoldDark: "#F6CE55" },
-	{ id: "green", label: "Green", fg: "#53C67D", bg: "#53C67D26", fgDark: "#5EC986", bgDark: "#5EC98626", fgBold: "#53C67D", fgBoldDark: "#5EC986" },
-	{ id: "blue", label: "Blue", fg: "#3B86F7", bg: "#3B86F726", fgDark: "#3F8FF7", bgDark: "#3F8FF726", fgBold: "#3B86F7", fgBoldDark: "#3F8FF7" },
+	{ id: "green", label: "Green", fg: "#30CF6A", bg: "#30CF6A26", fgDark: "#51DB84", bgDark: "#51DB8426", fgBold: "#30CF6A", fgBoldDark: "#51DB84" },
+	{ id: "blue", label: "Blue", fg: "#3869F0", bg: "#3869F026", fgDark: "#598BF8", bgDark: "#598BF826", fgBold: "#3869F0", fgBoldDark: "#598BF8" },
 	{ id: "purple", label: "Purple", fg: "#BB3ED9", bg: "#BB3ED926", fgDark: "#CA43EA", bgDark: "#CA43EA26", fgBold: "#BB3ED9", fgBoldDark: "#CA43EA" },
-	{ id: "pink", label: "Pink", fg: "#EB445A", bg: "#EB445A26", fgDark: "#EB4B63", bgDark: "#EB4B6326", fgBold: "#EB445A", fgBoldDark: "#EB4B63" },
-	{ id: "red", label: "Red", fg: "#ED5D4A", bg: "#ED5D4A26", fgDark: "#EE6958", bgDark: "#EE695826", fgBold: "#ED5D4A", fgBoldDark: "#EE6958" },
+	{ id: "pink", label: "Pink", fg: "#ED358E", bg: "#ED358E26", fgDark: "#F75FA8", bgDark: "#F75FA826", fgBold: "#ED358E", fgBoldDark: "#F75FA8" },
+	{ id: "red", label: "Red", fg: "#DE2E21", bg: "#DE2E2126", fgDark: "#EC5F55", bgDark: "#EC5F5526", fgBold: "#DE2E21", fgBoldDark: "#EC5F55" },
 ];
 
 export type ColorScheme = "notion" | "apple";
