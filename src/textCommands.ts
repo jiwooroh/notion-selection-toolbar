@@ -530,6 +530,49 @@ export function applyColor(editor: Editor, kind: ColorKind, colorId: string): vo
 	editor.focus();
 }
 
+/**
+ * Toggles a background (highlight) color on the selection — what Cmd/Ctrl+H does
+ * while the plugin is enabled. Removes it if the selection is already that
+ * highlight, recolors a different highlight, and wraps text-colored text
+ * (`<span class="nst-fg-…">`) instead of replacing it, so the text color stays.
+ * A Markdown `==highlight==` selection becomes the plugin's highlight. With no
+ * selection it uses the word under the cursor; returns false (nothing done) if
+ * there isn't one.
+ */
+export function toggleHighlight(editor: Editor, colorId: string): boolean {
+	if (!editor.getSelection()) {
+		// Like Obsidian's own highlight: with just a cursor, act on the word under it.
+		const word = editor.wordAt(editor.getCursor());
+		if (!word) return false;
+		editor.setSelection(word.from, word.to);
+	}
+	selectColorTag(editor);
+	const fromPos = editor.getCursor("from");
+	const toPos = editor.getCursor("to");
+	let selected = editor.getSelection();
+	const open = `<mark class="nst-hl-${colorId}">`;
+
+	let replacement: string;
+	const mark = isSingleColorTag(selected) ? MARK_RE.exec(selected) : null;
+	if (mark && selected.startsWith(open)) {
+		replacement = mark[1] ?? "";
+	} else if (mark) {
+		replacement = `${open}${mark[1] ?? ""}</mark>`;
+	} else {
+		if (isWrapped(selected, "==", "==")) selected = selected.slice(2, -2);
+		const body = isSingleColorTag(selected)
+			? selected
+			: markdownWrapsToHtml(inlineMarkdownToHtml(selected));
+		replacement = `${open}${body}</mark>`;
+	}
+
+	editor.replaceRange(replacement, fromPos, toPos);
+	const fromOff = editor.posToOffset(fromPos);
+	editor.setSelection(fromPos, editor.offsetToPos(fromOff + replacement.length));
+	editor.focus();
+	return true;
+}
+
 export function insertLink(editor: Editor, url: string): void {
 	const selected = editor.getSelection() || "link text";
 	editor.replaceSelection(`[${selected}](${url})`);

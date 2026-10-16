@@ -1,9 +1,10 @@
 import { App, FuzzySuggestModal, PluginSettingTab, Setting, setIcon } from "obsidian";
-import { COLOR_SCHEMES, ColorDef, ColorScheme, colorsFor } from "./colors";
+import { COLOR_SCHEMES, ColorDef, ColorScheme, colorsFor, derivedHighlight } from "./colors";
 import type { CommentMode, NotionToolbarSettings } from "./main";
 import type NotionToolbarPlugin from "./main";
 
-type HighlightMapKey = "highlightColorsLight" | "highlightColorsDark";
+type Theme = "light" | "dark";
+const TEXT_KEY = { light: "textColorsLight", dark: "textColorsDark" } as const;
 
 interface AppCommandEntry {
 	id: string;
@@ -65,24 +66,12 @@ export class NotionToolbarSettingTab extends PluginSettingTab {
 			});
 
 		containerEl.createEl("p", {
-			text: "Text colors come from the color scheme and differ between light and dark theme. Highlight (background) colors can be customized, separately for each theme, below; a customized color overrides the scheme's.",
+			text: "Edit each color by its text color, separately for light and dark theme. A customized color's highlight (background) is generated from it automatically, so text and highlight always match. Colors you haven't changed use the scheme's.",
 			cls: "setting-item-description",
 		});
 
-		this.renderHighlightSection(
-			containerEl,
-			"Light theme highlight colors",
-			"Used while Obsidian is in light mode.",
-			"highlightColorsLight",
-			(c) => c.bg,
-		);
-		this.renderHighlightSection(
-			containerEl,
-			"Dark theme highlight colors",
-			"Used while Obsidian is in dark mode.",
-			"highlightColorsDark",
-			(c) => c.bgDark,
-		);
+		this.renderColorSection(containerEl, "Light theme colors", "Used while Obsidian is in light mode.", "light");
+		this.renderColorSection(containerEl, "Dark theme colors", "Used while Obsidian is in dark mode.", "dark");
 
 		this.renderCommentSection(containerEl);
 		this.renderCustomButtonSection(containerEl);
@@ -168,47 +157,47 @@ export class NotionToolbarSettingTab extends PluginSettingTab {
 		return match?.name ?? id;
 	}
 
-	private renderHighlightSection(
-		containerEl: HTMLElement,
-		title: string,
-		desc: string,
-		key: HighlightMapKey,
-		defaultFor: (c: ColorDef) => string,
-	): void {
+	private renderColorSection(containerEl: HTMLElement, title: string, desc: string, theme: Theme): void {
 		new Setting(containerEl).setName(title).setDesc(desc).setHeading();
+		const textKey = TEXT_KEY[theme];
+		const dark = theme === "dark";
 
 		for (const c of colorsFor(this.plugin.settings.colorScheme)) {
-			const themeDefault = defaultFor(c);
-			const map = this.plugin.settings[key];
-			// The color picker takes #RRGGBB only; Apple's backgrounds carry an alpha
-			// channel (#RRGGBBAA), so the picker shows their opaque base color.
-			const current = (map[c.id] ?? themeDefault).slice(0, 7);
-			new Setting(containerEl)
-				.setName(c.label)
+			const schemeText = dark ? c.fgDark : c.fg;
+			const custom = this.plugin.settings[textKey][c.id];
+			const text = custom ?? schemeText;
+			const highlight = custom ? derivedHighlight(custom, c.id, dark) : dark ? c.bgDark : c.bg;
+
+			const setting = new Setting(containerEl).setName(c.label);
+			setting.settingEl.addClass("nst-color-setting");
+			// Live sample of this color's text on its highlight, on the theme's page color.
+			const page = setting.controlEl.createSpan({ cls: `nst-color-page ${dark ? "mod-dark" : "mod-light"}` });
+			const sample = page.createSpan({ cls: "nst-color-sample", text: "Aa" });
+			const paint = (fg: string, bg: string) => sample.setCssStyles({ color: fg, backgroundColor: bg });
+			paint(text, highlight);
+
+			setting
 				.addColorPicker((picker) =>
-					picker.setValue(current).onChange(async (value) => {
-						this.setMap(key, { ...this.plugin.settings[key], [c.id]: value });
+					// The color picker takes #RRGGBB only.
+					picker.setValue(text.slice(0, 7)).onChange(async (value) => {
+						this.plugin.settings[textKey] = { ...this.plugin.settings[textKey], [c.id]: value };
 						await this.plugin.saveSettings();
 						this.plugin.refreshColorVars();
+						paint(value, derivedHighlight(value, c.id, dark));
 					})
 				)
 				.addExtraButton((btn) =>
 					btn
 						.setIcon("rotate-ccw")
-						.setTooltip(`Reset to default (${themeDefault})`)
+						.setTooltip(`Reset to the scheme's color (${schemeText})`)
 						.onClick(async () => {
-							const next = { ...this.plugin.settings[key] };
-							delete next[c.id];
-							this.setMap(key, next);
+							const { [c.id]: _removed, ...restText } = this.plugin.settings[textKey];
+							this.plugin.settings[textKey] = restText;
 							await this.plugin.saveSettings();
 							this.plugin.refreshColorVars();
 							this.display();
 						})
 				);
 		}
-	}
-
-	private setMap(key: HighlightMapKey, value: NotionToolbarSettings[HighlightMapKey]): void {
-		this.plugin.settings[key] = value;
 	}
 }

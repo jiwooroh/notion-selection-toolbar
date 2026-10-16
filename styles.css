@@ -142,6 +142,49 @@ body .nst-toolbar button.nst-comment-btn {
 	height: 16px;
 }
 
+/* Settings tab — sample of a color's text on its highlight. The highlight is
+   translucent, so it's drawn on a page color for the theme it belongs to
+   (Obsidian's default light/dark page colors), not whatever theme is active. */
+.nst-color-page {
+	display: inline-flex;
+	padding: 4px;
+	border-radius: var(--radius-s, 4px);
+	border: 1px solid var(--background-modifier-border);
+}
+
+.nst-color-page.mod-light {
+	background: #ffffff;
+}
+
+.nst-color-page.mod-dark {
+	background: #1e1e1e;
+}
+
+/* Some themes (Baseline with its accent color scheme) hide every color picker
+   inside a setting, meaning to hide only Obsidian's accent color — which hid
+   these too. Restore Obsidian's own picker look for this plugin's rows. */
+body .setting-item.nst-color-setting .setting-item-control input[type="color"] {
+	width: calc(var(--swatch-width) + 4px);
+	height: var(--swatch-height);
+}
+
+body .setting-item.nst-color-setting .setting-item-control input[type="color"]::-webkit-color-swatch-wrapper {
+	display: block;
+	padding: 2px;
+}
+
+body .setting-item.nst-color-setting .setting-item-control input[type="color"]::after {
+	content: none;
+}
+
+.nst-color-sample {
+	min-width: 28px;
+	padding: 1px 6px;
+	border-radius: 3px;
+	font-weight: 600;
+	text-align: center;
+}
+
 /* Dropdown / popover panels */
 .nst-panel {
 	position: fixed;

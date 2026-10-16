@@ -81,34 +81,80 @@ export function isDarkTheme(): boolean {
 	return document.body.classList.contains("theme-dark");
 }
 
-/** Picks the user's custom highlight-color overrides for whichever theme is
- *  currently active — light and dark are stored separately so a highlight can
- *  be customized differently per theme. */
-export function activeHighlightMap(
-	light: Record<string, string>,
-	dark: Record<string, string>,
-): Record<string, string> {
+/** Picks whichever of a light/dark pair of overrides applies to the current theme. */
+export function activeMap(light: Record<string, string>, dark: Record<string, string>): Record<string, string> {
 	return isDarkTheme() ? dark : light;
+}
+
+/** The highlight generated for a customized text color: a translucent tint of
+ *  it, the way the Apple scheme's backgrounds work — 15% alpha, or 20% for
+ *  yellow in light mode, which washes out on white at 15%. */
+export function derivedHighlight(textColor: string, id: string, dark: boolean): string {
+	const alpha = !dark && id === "yellow" ? "33" : "26";
+	return textColor.slice(0, 7) + alpha;
+}
+
+function hexToHsl(hex: string): [number, number, number] {
+	const n = parseInt(hex.slice(1, 7), 16);
+	const r = ((n >> 16) & 255) / 255, g = ((n >> 8) & 255) / 255, b = (n & 255) / 255;
+	const max = Math.max(r, g, b), min = Math.min(r, g, b);
+	const l = (max + min) / 2;
+	if (max === min) return [0, 0, l];
+	const d = max - min;
+	const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+	const h = max === r ? (g - b) / d + (g < b ? 6 : 0) : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+	return [h / 6, s, l];
+}
+
+function hslToHex(h: number, s: number, l: number): string {
+	const f = (n: number) => {
+		const k = (n + h * 12) % 12;
+		const c = l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+		return Math.round(c * 255).toString(16).padStart(2, "0");
+	};
+	return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
+}
+
+/** Turns a highlight color customized in an older version (when highlights
+ *  were edited directly) into a text color: its hue and saturation, at the
+ *  lightness of the scheme's default text color — so a pale or very dark
+ *  highlight still becomes readable text, and the highlight generated from it
+ *  (derivedHighlight) keeps the color the user picked. */
+export function textColorFromHighlight(highlight: string, defaultText: string): string {
+	const [h, s] = hexToHsl(highlight);
+	const [, , l] = hexToHsl(defaultText);
+	return hslToHex(h, s, l);
+}
+
+export interface ColorOverrides {
+	textColorsLight: Record<string, string>;
+	textColorsDark: Record<string, string>;
 }
 
 /**
  * Applied text/highlight colors are written as named classes (`nst-fg-<id>` /
  * `nst-hl-<id>`), not baked-in hex — the actual color comes from `--nst-fg-*` /
  * `--nst-hl-*` CSS custom properties. styles.css defines their defaults for
- * both themes; this only needs to set an *inline* override on <body> for
- * highlight colors the user has customized (text colors aren't customizable),
- * clearing it when there's no override so the CSS default takes back over.
- * That's what makes already-applied colors update live when the theme
- * changes or a custom color is edited, instead of freezing at apply-time.
+ * both themes and schemes; this only sets *inline* overrides on <body> for
+ * colors the user has customized, clearing them otherwise so the CSS default
+ * takes back over. That's what makes already-applied colors update live when
+ * the theme changes or a custom color is edited, instead of freezing at
+ * apply-time.
+ *
+ * A customized text color sets the text and bold color and generates its
+ * matching highlight (derivedHighlight).
  */
-export function refreshHighlightColorVars(
-	highlightColorsLight: Record<string, string>,
-	highlightColorsDark: Record<string, string>,
-): void {
-	const active = activeHighlightMap(highlightColorsLight, highlightColorsDark);
+export function refreshColorOverrides(overrides: ColorOverrides): void {
+	const dark = isDarkTheme();
+	const text = activeMap(overrides.textColorsLight, overrides.textColorsDark);
 	for (const def of NOTION_COLORS) {
-		const custom = active[def.id];
+		const fg = text[def.id];
+		const hl = fg ? derivedHighlight(fg, def.id, dark) : undefined;
 		// An empty value removes the inline override so the CSS default applies.
-		document.body.setCssProps({ [`--nst-hl-${def.id}`]: custom ?? "" });
+		document.body.setCssProps({
+			[`--nst-fg-${def.id}`]: fg ?? "",
+			[`--nst-fg-${def.id}-bold`]: fg ?? "",
+			[`--nst-hl-${def.id}`]: hl ?? "",
+		});
 	}
 }

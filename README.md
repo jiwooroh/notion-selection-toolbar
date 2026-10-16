@@ -61,6 +61,8 @@ Click **A** to open the color panel:
 
 Press **Cmd/Ctrl + Shift + H** to apply your most recently used color to the selection without opening the toolbar.
 
+While the plugin is enabled, Obsidian's **Cmd/Ctrl + H** (Toggle highlight) applies the plugin's yellow highlight instead of `==text==`, and removes it when pressed again. Text that already has a text color keeps it.
+
 Colors follow your theme: applied colors switch automatically between light and dark mode.
 
 In the Notion scheme, bold colored text uses a slightly deeper bold variant of its color. Bold, italic, strikethrough and code applied to colored or highlighted text are written inside the color tag as HTML (e.g. `<span class="nst-fg-red"><strong>text</strong></span>`) so they render in Live Preview as well as Reading view. Obsidian's own **Cmd/Ctrl + B** and **Cmd/Ctrl + I** do the same when the selection is colored or highlighted text.
@@ -97,7 +99,7 @@ There are two color schemes, chosen under **Settings → Color scheme**. Switchi
 | Pink | `#ED358E` | `#ED358E26` | `#F75FA8` | `#F75FA826` |
 | Red | `#DE2E21` | `#DE2E2126` | `#EC5F55` | `#EC5F5526` |
 
-Highlight colors can be customized in settings (see below) and override the scheme's; text colors are fixed.
+Each color can be customized in settings (see below) by its text color; its highlight is generated to match, and customized colors override the scheme's.
 
 > **Note:** Colors are saved as HTML (`<span class="nst-fg-red">`, `<mark class="nst-hl-yellow">`) and get their look from this plugin's CSS. If you disable the plugin, the text stays but the colors stop showing.
 
@@ -134,7 +136,7 @@ Go to **Settings → Notion Selection Toolbar**:
 <img src="images/settings.png" alt="Settings" width="600">
 
 - **Color scheme**: **Notion** or **Apple** palette for text and highlight colors (see [Colors](#colors)).
-- **Light / Dark theme highlight colors**: change each background color separately for light and dark mode. Use the ↺ button to reset a color to its default. Highlights already in your notes update immediately.
+- **Light / Dark theme colors**: change each color's text color, separately for light and dark mode. The matching highlight (background) is generated from it automatically, and a preview shows the text on its highlight. Use the ↺ button to go back to the scheme's color. Colors already in your notes update immediately.
 - **Comment style**: what the Comment button does. **Automatic** (default) uses Notion-style Comments when it's enabled and native `%%` comments otherwise. You can also pick one of the two to always use.
 - **Custom toolbar button**
   - **Command**: pick any command from the command palette for the button to run.
