@@ -83,7 +83,7 @@ There are two color schemes, chosen under **Settings → Color scheme**. Switchi
 | Yellow | `#C29343` | `#C29343` | `#FAF3DE` | `#C29A56` | `#C29A56` | `#53442C` |
 | Green | `#679176` | `#548164` | `#EEF3EC` | `#5C8C6B` | `#659C75` | `#2A3C31` |
 | Blue | `#487CA5` | `#487CA5` | `#E9F3F7` | `#6786C4` | `#6786C4` | `#1E394C` |
-| Purple | `#8A67AB` | `#8A67AB` | `#F6F3F9` | `#956ACD` | `#956ACD` | `#3A2E47` |
+| Purple | `#8A67AB` | `#8A67AB` | `#EDE5F5` | `#956ACD` | `#956ACD` | `#3A2E47` |
 | Pink | `#B75D8F` | `#B35488` | `#F8F1F5` | `#B85A8C` | `#C25F94` | `#492E3B` |
 | Red | `#C4554D` | `#C4554D` | `#FAECEC` | `#CF5D57` | `#CF5D57` | `#4D302B` |
 

@@ -24,7 +24,7 @@ export const NOTION_COLORS: ColorDef[] = [
 	{ id: "yellow", label: "Yellow", fg: "#C29343", bg: "#FAF3DE", fgDark: "#C29A56", bgDark: "#53442C", fgBold: "#C29343", fgBoldDark: "#C29A56" },
 	{ id: "green", label: "Green", fg: "#679176", bg: "#EEF3EC", fgDark: "#5C8C6B", bgDark: "#2A3C31", fgBold: "#548164", fgBoldDark: "#659C75" },
 	{ id: "blue", label: "Blue", fg: "#487CA5", bg: "#E9F3F7", fgDark: "#6786C4", bgDark: "#1E394C", fgBold: "#487CA5", fgBoldDark: "#6786C4" },
-	{ id: "purple", label: "Purple", fg: "#8A67AB", bg: "#F6F3F9", fgDark: "#956ACD", bgDark: "#3A2E47", fgBold: "#8A67AB", fgBoldDark: "#956ACD" },
+	{ id: "purple", label: "Purple", fg: "#8A67AB", bg: "#EDE5F5", fgDark: "#956ACD", bgDark: "#3A2E47", fgBold: "#8A67AB", fgBoldDark: "#956ACD" },
 	{ id: "pink", label: "Pink", fg: "#B75D8F", bg: "#F8F1F5", fgDark: "#B85A8C", bgDark: "#492E3B", fgBold: "#B35488", fgBoldDark: "#C25F94" },
 	{ id: "red", label: "Red", fg: "#C4554D", bg: "#FAECEC", fgDark: "#CF5D57", bgDark: "#4D302B", fgBold: "#C4554D", fgBoldDark: "#CF5D57" },
 ];
