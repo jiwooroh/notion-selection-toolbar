@@ -564,6 +564,31 @@ mark[class^="nst-hl-"],
 .nst-hl-red,
 .markdown-rendered .nst-hl-red { background-color: var(--nst-hl-red); }
 
+/* Obsidian's own colored highlights (1.14+): `==🟠text==` renders as
+   <mark data-highlight="orange">, colored from --highlight-background-<color>.
+   Point those (and the uncolored `==text==` default) at this plugin's colors so
+   native highlights follow the chosen scheme and customizations too. Body
+   classes give (0,1,1), above app.css's `body` (0,0,1). Obsidian has no gray,
+   brown or pink, so those stay plugin-only. */
+body.theme-light,
+body.theme-dark {
+	--highlight-background: var(--nst-hl-yellow);
+	--highlight-background-red: var(--nst-hl-red);
+	--highlight-background-orange: var(--nst-hl-orange);
+	--highlight-background-yellow: var(--nst-hl-yellow);
+	--highlight-background-green: var(--nst-hl-green);
+	--highlight-background-blue: var(--nst-hl-blue);
+	--highlight-background-purple: var(--nst-hl-purple);
+}
+
+/* The color dots in Obsidian's highlight menus match the text colors. */
+.highlight-swatch[data-highlight="red"] { background-color: var(--nst-fg-red); }
+.highlight-swatch[data-highlight="orange"] { background-color: var(--nst-fg-orange); }
+.highlight-swatch[data-highlight="yellow"] { background-color: var(--nst-fg-yellow); }
+.highlight-swatch[data-highlight="green"] { background-color: var(--nst-fg-green); }
+.highlight-swatch[data-highlight="blue"] { background-color: var(--nst-fg-blue); }
+.highlight-swatch[data-highlight="purple"] { background-color: var(--nst-fg-purple); }
+
 /* Toolbar/panel state classes (toggled from SelectionToolbar.ts). */
 .nst-toolbar.nst-hidden {
 	display: none;

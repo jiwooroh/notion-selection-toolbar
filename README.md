@@ -61,7 +61,9 @@ Click **A** to open the color panel:
 
 Press **Cmd/Ctrl + Shift + H** to apply your most recently used color to the selection without opening the toolbar.
 
-While the plugin is enabled, Obsidian's **Cmd/Ctrl + H** (Toggle highlight) applies the plugin's yellow highlight instead of `==text==`, and removes it when pressed again. Text that already has a text color keeps it.
+On Obsidian 1.14 and later, highlights use Obsidian's own colored-highlight syntax: the toolbar writes `==🟠text==` for red, orange, green, blue and purple, and `==text==` for yellow (Obsidian's default highlight color). These native highlights, including ones you type yourself, are drawn in this plugin's colors, so they follow the color scheme and your customizations. Gray, brown and pink have no Obsidian equivalent and use the plugin's `<mark>` tag, as does any highlight on text that already has a text color (so the text color is kept). On older Obsidian versions all highlights use the plugin's `<mark>` tag.
+
+**Cmd/Ctrl + H** (Obsidian's Toggle highlight) gives `==text==`, in the plugin's yellow. On text that already has a text color, it wraps the plugin's yellow highlight around it instead, and removes it when pressed again.
 
 Colors follow your theme: applied colors switch automatically between light and dark mode.
 
@@ -101,7 +103,7 @@ There are two color schemes, chosen under **Settings → Color scheme**. Switchi
 
 Each color can be customized in settings (see below) by its text color; its highlight is generated to match, and customized colors override the scheme's.
 
-> **Note:** Colors are saved as HTML (`<span class="nst-fg-red">`, `<mark class="nst-hl-yellow">`) and get their look from this plugin's CSS. If you disable the plugin, the text stays but the colors stop showing.
+> **Note:** Text colors (and highlights Obsidian has no syntax for) are saved as HTML (`<span class="nst-fg-red">`, `<mark class="nst-hl-pink">`) and get their look from this plugin's CSS. If you disable the plugin, the text stays but those colors stop showing; `==🟠text==` highlights keep working with Obsidian's own colors.
 
 ### Inline formatting
 

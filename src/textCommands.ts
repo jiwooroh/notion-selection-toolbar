@@ -473,7 +473,7 @@ export function clearFormatting(editor: Editor): void {
 	text = text.replace(/(\*\*|__)([\s\S]*?)\1/g, "$2");
 	text = text.replace(/(\*|_)([\s\S]*?)\1/g, "$2");
 	text = text.replace(/~~([\s\S]*?)~~/g, "$1");
-	text = text.replace(/==([\s\S]*?)==/g, "$1");
+	text = text.replace(new RegExp(`==${HIGHLIGHT_EMOJI}?([\\s\\S]*?)==`, "gu"), "$1");
 	text = text.replace(/`([^`]*?)`/g, "$1");
 	text = text
 		.split("\n")
@@ -489,6 +489,80 @@ export function clearFormatting(editor: Editor): void {
 const SPAN_RE = /^<span (?:class|style)="[^"]*">([\s\S]*)<\/span>$/;
 const MARK_RE = /^<mark (?:class|style)="[^"]*">([\s\S]*)<\/mark>$/;
 
+/** Obsidian 1.14+ colors a Markdown highlight by a leading emoji: `==🟠text==`.
+ *  Yellow is Obsidian's default highlight color, so it's written as plain
+ *  `==text==`; colors Obsidian doesn't have (gray, brown, pink) stay plugin tags. */
+const NATIVE_HIGHLIGHT_EMOJI: Record<string, string> = {
+	red: "🔴",
+	orange: "🟠",
+	yellow: "",
+	green: "🟢",
+	blue: "🔵",
+	purple: "🟣",
+};
+// Every emoji Obsidian accepts for a highlight color (circles and squares).
+const HIGHLIGHT_EMOJI = "(?:🔴|🟥|🟠|🟧|🟡|🟨|🟢|🟩|🔵|🟦|🟣|🟪)";
+const NATIVE_HIGHLIGHT_RE = new RegExp(`^==(${HIGHLIGHT_EMOJI})?([\\s\\S]*)==$`, "u");
+
+/** Whether this Obsidian supports colored `==🟠text==` highlights (1.14+): its
+ *  stylesheet then defines the per-color highlight variables. */
+function nativeHighlightSupported(): boolean {
+	return getComputedStyle(document.body).getPropertyValue("--highlight-background-orange").trim() !== "";
+}
+
+/** If the selection is the text inside a `==…==` highlight (markers just outside
+ *  it, as when selecting in Live Preview), widens it to include them. */
+function selectNativeHighlight(editor: Editor): void {
+	const from = editor.getCursor("from");
+	const to = editor.getCursor("to");
+	if (from.line !== to.line || NATIVE_HIGHLIGHT_RE.test(editor.getSelection())) return;
+	const line = editor.getLine(from.line);
+	const open = new RegExp(`==${HIGHLIGHT_EMOJI}?$`, "u").exec(line.slice(0, from.ch));
+	if (!open || !line.startsWith("==", to.ch)) return;
+	editor.setSelection({ line: from.line, ch: from.ch - open[0].length }, { line: to.line, ch: to.ch + 2 });
+}
+
+/** Undoes inlineMarkdownToHtml for content leaving a color tag for Markdown. */
+function inlineHtmlToMarkdown(text: string): string {
+	return text
+		.replace(/<strong><em>([\s\S]*?)<\/em><\/strong>/g, "***$1***")
+		.replace(/<strong>([\s\S]*?)<\/strong>/g, "**$1**")
+		.replace(/<em>([\s\S]*?)<\/em>/g, "*$1*")
+		.replace(/<s>([\s\S]*?)<\/s>/g, "~~$1~~")
+		.replace(/<code>([\s\S]*?)<\/code>/g, "`$1`");
+}
+
+/** Applies a highlight color as Obsidian's own `==🟠text==` syntax, so it shows
+ *  up and edits like any Obsidian highlight (and in other Markdown apps). Takes
+ *  over plain text, an existing `==…==` highlight or a plugin `<mark>`; returns
+ *  false for text colored with a plugin `<span>` (or mixed with tags), which
+ *  keeps the plugin tag so the text color survives. */
+function applyNativeHighlight(editor: Editor, colorId: string): boolean {
+	selectColorTag(editor);
+	selectNativeHighlight(editor);
+	const selected = editor.getSelection();
+	let inner: string;
+	const native = NATIVE_HIGHLIGHT_RE.exec(selected);
+	const mark = isSingleColorTag(selected) ? MARK_RE.exec(selected) : null;
+	if (native) inner = native[2] ?? "";
+	else if (mark) inner = inlineHtmlToMarkdown(mark[1] ?? "");
+	else if (new RegExp(COLOR_TAG_RE.source).test(selected)) return false;
+	else inner = selected;
+
+	const emoji = NATIVE_HIGHLIGHT_EMOJI[colorId];
+	let replacement: string;
+	if (colorId === "default") replacement = inner;
+	else if (emoji !== undefined) replacement = `==${emoji}${inner}==`;
+	else replacement = `<mark class="nst-hl-${colorId}">${markdownWrapsToHtml(inlineMarkdownToHtml(inner))}</mark>`;
+
+	const fromPos = editor.getCursor("from");
+	editor.replaceRange(replacement, fromPos, editor.getCursor("to"));
+	const fromOff = editor.posToOffset(fromPos);
+	editor.setSelection(fromPos, editor.offsetToPos(fromOff + replacement.length));
+	editor.focus();
+	return true;
+}
+
 /**
  * Applies a text or highlight color to the selection as a named CSS class
  * (`nst-fg-<id>` / `nst-hl-<id>`) rather than a baked-in hex value — the
@@ -498,6 +572,8 @@ const MARK_RE = /^<mark (?:class|style)="[^"]*">([\s\S]*)<\/mark>$/;
  * at whatever was current the moment you applied them.
  */
 export function applyColor(editor: Editor, kind: ColorKind, colorId: string): void {
+	if (!editor.getSelection()) return;
+	if (kind === "background" && nativeHighlightSupported() && applyNativeHighlight(editor, colorId)) return;
 	const fromPos = editor.getCursor("from");
 	const toPos = editor.getCursor("to");
 	const selected = editor.getSelection();
@@ -547,6 +623,9 @@ export function toggleHighlight(editor: Editor, colorId: string): boolean {
 		editor.setSelection(word.from, word.to);
 	}
 	selectColorTag(editor);
+	// With Obsidian's own colored highlights, plain text gets its `==text==`
+	// (which this plugin colors); only text in plugin color tags is handled here.
+	if (nativeHighlightSupported() && !selectionHasColorTag(editor)) return false;
 	const fromPos = editor.getCursor("from");
 	const toPos = editor.getCursor("to");
 	let selected = editor.getSelection();
