@@ -4,6 +4,6 @@
 	"version": "1.3.0",
 	"minAppVersion": "1.4.0",
 	"description": "A Notion-style floating toolbar that appears when you select text or a line: change block type, text/highlight color, and inline formatting.",
-	"author": "Lucy Roh",
+	"author": "Jiwoo Roh",
 	"isDesktopOnly": false
 }

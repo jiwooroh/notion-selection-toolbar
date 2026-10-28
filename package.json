@@ -8,7 +8,7 @@
 		"build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
 	},
 	"keywords": [],
-	"author": "Lucy Roh",
+	"author": "Jiwoo Roh",
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^20.11.5",
